@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+body{
+    font-family: "inter", sans-serif;
+}
+
+
+#button{
+    background-color: rgba(40, 153, 203, 1);
+    
+    width: 270px;
+    height: 48px;
+    border-radius: 25px;
+    color: white;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+
+}
+
+#eye-btn{
+    border: none;
+    background-color: transparent;
+    border: white;
+}
+#eye-btn:focus{
+    outline: none;
+}
