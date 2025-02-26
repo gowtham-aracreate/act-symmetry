@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-// import axios from 'axios'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import Label from '../Components/Label'
 import Button from '../Components/Button'
 import { Eye, EyeOff } from 'lucide-react'
@@ -9,19 +9,45 @@ import './login.css'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const [user, setUser] = useState([])
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const navigate = useNavigate();
   
+  const fetchUser = async () => {
+    try {
+      const res = await axios.get('http://localhost:3000/users');
+      setUser(Array.isArray(res.data) ? res.data : []);
+    } catch (error) {
+      console.error('Error fetching User data', error);
+      setUser([]);
+    }
+  };
+useEffect(()=>{
+    fetchUser()
+  }, [])
 
+const handleUser = async () =>{
+    const UserDetail = {
+      email,
+      password
+    }
+    const res = await axios.post('http://localhost:3000/users' , UserDetail)
+    fetchUser(); 
+    setUser(res.data)
+    console.log(res.data)
+  }
 
   return (
     <div className="@container w-150 ">
       <div className="bg-white mt-[195px] mr-[132px] ml-[130px]">
         <h1 className="font-bold text-2xl mb-4 text-center">Welcome back</h1>
         <p className="text-gray-600 mb-6 text-center">Please provide user credentials to login</p>
-        
+        <form onSubmit={handleUser}>   
         <div className="mb-4">
           <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2" text="Email" />Email
-          <input 
+          <input
+          onChange={(e) => setEmail(e.target.value)}
           text="Email"
             type="email" 
             id="email" 
@@ -34,6 +60,7 @@ const Login = () => {
           <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password">
             <div className="relative">Password
               <input
+                onChange={(e) => setPassword(e.target.value)}
               text="Password" 
                 type={showPassword ? "text" : "password"} 
                 id="password" 
@@ -60,8 +87,8 @@ const Login = () => {
         </div>
 
         
-        <Button onClick={() => navigate("/dashboard")} id="button" type="submit" className="flex items-center justify-center ml-7 ">Log In</Button>
-
+        <Button id="button" type="submit" className="flex items-center justify-center ml-7 ">Log In</Button>
+</form>
         <div className="flex items-center  pt-4 justify-center">
           <p>Don't have an account?  </p>
           <a href="#" onClick={() => navigate("/register")} className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800 ">Register</a>
