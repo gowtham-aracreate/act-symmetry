@@ -1,5 +1,5 @@
 import React from 'react'
-import Login from './Pages/Login'
+import Login from './Pages/LoginPage'
 import ForgetPassword from './Pages/ForgetPassword'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegisterPage from './Pages/RegisterPage';
