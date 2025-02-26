@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+// import axios from 'axios'
 import Label from '../Components/Label'
 import Button from '../Components/Button'
 import { Eye, EyeOff } from 'lucide-react'
@@ -59,7 +60,7 @@ const Login = () => {
         </div>
 
         
-        <Button id="button" type="submit" className="flex items-center justify-center ml-7">Log In</Button>
+        <Button onClick={() => navigate("/dashboard")} id="button" type="submit" className="flex items-center justify-center ml-7 ">Log In</Button>
 
         <div className="flex items-center  pt-4 justify-center">
           <p>Don't have an account?  </p>
