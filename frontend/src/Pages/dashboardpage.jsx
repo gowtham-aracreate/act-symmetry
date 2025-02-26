@@ -10,7 +10,7 @@ function DashboardPage() {
     return (
       <DashboardLayout>
         <h1 className="w-[171px] h-[40px] ml-[44px] font-bold text-[32px] text-[#2899CB] ">Dashboard</h1>
-        <div className="grid grid-cols-3">
+        <div className="md:grid md:grid-cols-3 sm:grid sm:grid-cols-2">
        <Card 
        name="Profile"
        src={profile_black} />
