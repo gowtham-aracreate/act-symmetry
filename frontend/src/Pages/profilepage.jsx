@@ -68,6 +68,10 @@ function ProfilePage() {
             <input className="items-center content-center w-[372px] h-[48px] ml-[44px] border-[1px] rounded-[7px] border-[#9C9C9C] bg-white" type="text" placeholder="search" />
               </label>
 
+              <div className="">
+                <h1>hello world</h1>
+              </div>
+
       </DashboardLayout>
     );
 }
