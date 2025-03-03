@@ -23,6 +23,19 @@ const userSchema = new mongoose.Schema({
 
 const Users = mongoose.model("users", userSchema);
 
+const createdUserSchema = new mongoose.Schema({
+    name: String,
+    email: { type: String, unique: true },
+    password: String,
+    address: String,
+    locality: String,
+    statecode: String,
+    pin: String,
+    status: String
+});
+
+const CreatedUsers = mongoose.model("createdUsers", createdUserSchema);
+
 app.post('/create', async (req, res) => {
     const { name, email, password } = req.body;
     try {
@@ -36,6 +49,27 @@ app.post('/create', async (req, res) => {
     } catch (error) {
         console.error('Error creating user', error);
         res.status(500).send('Error creating user');
+    }
+});
+
+app.post('/createExtended', async (req, res) => {
+    const { name, email, password, address, locality, statecode, pin, status } = req.body;
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const data = await CreatedUsers.create({ 
+            name,
+            email,
+            password: hashedPassword,
+            address,
+            locality,
+            statecode,
+            pin,
+            status
+        });
+        res.json(data);
+    } catch (error) {
+        console.error('Error creating extended user', error);
+        res.status(500).send('Error creating extended user');
     }
 });
 
@@ -65,6 +99,16 @@ app.post('/login', async (req, res) => {
 app.get('/users', async (req, res) => {
     const data = await Users.find();
     res.json(data);
+});
+
+app.get('/createdUsers', async (req, res) => {
+    try {
+        const data = await CreatedUsers.find();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching extended users', error);
+        res.status(500).send('Error fetching extended users');
+    }
 });
 
 // app.get('*', (req, res) => {
