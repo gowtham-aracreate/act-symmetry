@@ -18,18 +18,18 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/post", { email, pass });
+      const response = await axios.get("http://localhost:3000/register", { email, pass });
 
       console.log(response.data);  // Debugging: Check response from backend
-
+      if (response.status===201){
       alert("Login successful!");
+      }
       navigate("/dashboard"); // Redirect after login
 
     } catch (error) {
-      console.error("Error logging in:", error);
-      alert("Login failed. Please check your credentials.");
+      alert(error.response?.data?.error || "Registration failed!")
     }
-  };
+  }
 
   return (
     <div className="@container w-150">
@@ -89,24 +89,16 @@ const Login = () => {
           </div>
 
           {/* Submit Button */}
-          <Button type="submit" className="flex items-center justify-center ml-7">
+          <Button type="submit" className="flex items-center justify-center ml-7 bg-[">
             Log In
           </Button>
 
         </form>
         {/* Form End */}
 
-        {/* Register Link */}
-        <div className="flex items-center pt-4 justify-center">
-          <p>Don't have an account? </p>
-          <a href="#" onClick={() => navigate("/register")} className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800">
-            Register
-          </a>
-        </div>
-
       </div>
     </div>
   );
-};
+}
 
 export default Login;

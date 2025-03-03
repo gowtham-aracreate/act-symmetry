@@ -13,7 +13,7 @@ import {useNavigate} from "react-router-dom";
 const DashboardLayout = ({children}) => {
      const navigate = useNavigate();
   return (
-    <div className='md:h-screen  bg-[#272C48] relative flex flex-row'>
+    <div className='md:h-screen  bg-[#272C48] relative flex flex-row z-50'>
         <header className='h-[60px] w-full fixed top-0 left-0 bg-[#FFFFFF]'>
              <img className='w-[120px] h-[60px] ml-[25px]' src={admin_logo} alt="" />
              <div className='flex absolute bottom-5 right-10 gap-8'>
