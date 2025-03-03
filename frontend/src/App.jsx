@@ -1,19 +1,14 @@
-import React from 'react'
-import Login from './Pages/LoginPage'
-import ForgetPassword from './Pages/ForgetPassword'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './Pages/LoginPage';
+import ForgetPassword from './Pages/ForgetPassword';
 import RegisterPage from './Pages/RegisterPage';
-import DashboardPage from './Pages/dashboardpage';
+import DashboardPage from './Pages/DashboardPage';
 import ProfilePage from './Pages/profilepage';
-// import CreateCard from './Components/CreateCard'
 
 const App = () => {
   return (
     <div>
-      {/* <CreateCard/> */}
-      {/* < ProfilePage /> */}
-      {/* < DashboardPage /> */}
-      {/* <Login /> */}
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
@@ -23,12 +18,8 @@ const App = () => {
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </Router>
-      {/* < Table /> */}
-
-
-
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
