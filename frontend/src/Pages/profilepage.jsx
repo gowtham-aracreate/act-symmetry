@@ -23,7 +23,7 @@ function ProfilePage() {
 
   useEffect(() => {
     axios.get('http://localhost:4000/createdUsers')
-      .then(response => {setData(response.data); console.log(response.data);})
+      .then(response => { setData(response.data); console.log(response.data); })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
@@ -31,6 +31,20 @@ function ProfilePage() {
   const handleClose = () => setIsOpen(false);
   const handleChange = (e) => setNewUser({ ...newUser, [e.target.name]: e.target.value });
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Active':
+        return 'text-green-500';
+      case 'Inactive':
+        return 'text-orange-500';
+      case 'Block':
+        return 'text-red-500';
+      default:
+        return '';
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.post('http://localhost:4000/createExtended', newUser)
@@ -41,6 +55,26 @@ function ProfilePage() {
         setIsOpen(false);
       })
       .catch(error => console.error('Error creating user:', error));
+  };
+
+  const handleEditUser = (updatedUser) => {
+    axios.put(`http://localhost:4000/updateUser/${updatedUser.email}`, updatedUser)
+      .then(response => {
+        const updatedData = data.map((user) =>
+          user.email === updatedUser.email ? response.data : user
+        );
+        setData(updatedData);
+      })
+      .catch(error => console.error('Error updating user:', error));
+  };
+
+  const handleDeleteUser = (user) => {
+    axios.delete(`http://localhost:4000/deleteUser/${user.email}`)
+      .then(response => {
+        const updatedData = data.filter((item) => item.email !== user.email);
+        setData(updatedData);
+      })
+      .catch(error => console.error('Error deleting user:', error));
   };
 
   const filteredData = data.filter(row =>
@@ -57,7 +91,7 @@ function ProfilePage() {
             <div className="flex relative w-full items-center pb-6">
               <h1 className="pl-10 font-bold text-[32px] text-[#2899CB]">PROFILE</h1>
               <div className="absolute right-10">
-                <div role='button' className="bg-[#2899CB] text-white cursor-pointer font-bold py-2 px-4 rounded " onClick={handleOpen}>
+                <div role='button' className="bg-[#0A2463] text-white cursor-pointer font-bold py-2 px-4 rounded " onClick={handleOpen}>
                   CREATE
                 </div>
               </div>
@@ -71,7 +105,7 @@ function ProfilePage() {
                 onChange={handleSearchChange}
               />
             </div>
-            <Table data={filteredData} />
+            <Table data={filteredData} onEditUser={handleEditUser} onDeleteUser={handleDeleteUser} getStatusColor={getStatusColor} />
           </div>
           {isOpen && (
             <div className="fixed inset-0 flex items-center justify-center  bg-opacity-90">
@@ -110,7 +144,7 @@ function ProfilePage() {
                       /> Block
                     </div>
                     <div className="flex flex-row gap-2 pt-8 justify-end">
-                      <div role='button' className="bg-[#2899CB] text-white  cursor-pointer font-bold py-2 px-4 rounded "  id="btn" onClick={handleClose}>
+                      <div role='button' className="bg-[#2899CB] text-white  cursor-pointer font-bold py-2 px-4 rounded " id="btn" onClick={handleClose}>
                         Cancel
                       </div>
                       <Button className="font-bold py-2 px-4 rounded bg-[#2899CB] " id="btn" type="submit">

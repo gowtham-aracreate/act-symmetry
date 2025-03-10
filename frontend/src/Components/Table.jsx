@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Eye, Edit, Trash } from "lucide-react";
 import Modal from './modal';
 
-const Table = ({ data, onAddUser, onEditUser, onDeleteUser }) => {
+const Table = ({ data, onEditUser, onDeleteUser }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -11,6 +11,7 @@ const Table = ({ data, onAddUser, onEditUser, onDeleteUser }) => {
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   const handleClick = (page) => {
+    setCurrentPage(page);
   };
 
   const handleNext = () => {
@@ -27,13 +28,37 @@ const Table = ({ data, onAddUser, onEditUser, onDeleteUser }) => {
 
   const handleViewDetails = (user) => {
     setSelectedUser(user);
+    setModalMode('view');
     setIsModalOpen(true);
+  };
+
+  const handleEditUser = (user) => {
+    setSelectedUser(user);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleSaveUser = (updatedUser) => {
+    onEditUser(updatedUser);
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
+
+  const handleDeleteUser = (user) => {
+    setSelectedUser(user);
+    setModalMode('delete');
+    setIsModalOpen(true);
+  };
+
+  const handleConfirmDeleteUser = (user) => {
+    onDeleteUser(user);
+    setIsModalOpen(false);
+    setSelectedUser(null);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedUser(null);
-    
   };
 
   const currentData = data.slice(
@@ -46,7 +71,7 @@ const Table = ({ data, onAddUser, onEditUser, onDeleteUser }) => {
       <div className="overflow-x-auto rounded-lg">
         <table className="w-full">
           <thead>
-            <tr className="bg-[#2899CB] text-white">
+            <tr className="bg-[#0A2463] text-white">
               <th className="p-3 text-left"><input type="checkbox" /></th>
               <th className="p-3 text-left">Username</th>
               <th className="p-3 text-left">Email ID</th>
@@ -62,11 +87,11 @@ const Table = ({ data, onAddUser, onEditUser, onDeleteUser }) => {
                 <td className="p-3">{item.name}</td>
                 <td className="p-3">{item.email}</td>
                 <td className="p-3">{item.address}</td>
-                <td className={`p-3 ${item.status === 'Active' ? 'text-green-500' : item.status === 'Inactive' ? 'text-orange-500' : 'text-red-500'}`}>{item.status}</td>
+                <td className={`p-3 ${item.status === 'Active' ? 'text-green-500' : item.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{item.status}</td>
                 <td className="p-3 flex space-x-2 ">
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
-                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer"><Edit size={16} /></button>
-                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer"><Trash size={16} /></button>
+                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
+                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
                 </td>
               </tr>
             ))}
@@ -88,7 +113,16 @@ const Table = ({ data, onAddUser, onEditUser, onDeleteUser }) => {
         </div>
         <button onClick={handleNext} className="px-3 py-1 border-[1px] border-gray-300 rounded ml-2 cursor-pointer" disabled={currentPage === totalPages}>&gt;</button>
       </div>
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal} user={selectedUser} />
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        user={selectedUser}
+        mode={modalMode}
+        onSave={handleSaveUser}
+        onEdit={handleSaveUser}
+        onDelete={handleConfirmDeleteUser} // Pass handleConfirmDeleteUser to Modal
+        setModalMode={setModalMode} // Pass setModalMode to Modal
+      />
     </div>
   );
 };

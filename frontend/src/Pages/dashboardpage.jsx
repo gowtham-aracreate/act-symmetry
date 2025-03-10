@@ -12,7 +12,7 @@ function DashboardPage() {
   const navigate =useNavigate()
     return (
       <DashboardLayout>
-        <h1 className="w-[171px] h-[40px] ml-[44px] font-bold text-[32px] text-[#2899CB] ">Dashboard</h1>
+        <h1 className="w-[171px] h-[40px] ml-[44px] font-bold text-[32px] text-[#2899CB] ">DASHBOARD</h1>
         <div className="md:grid md:grid-cols-3 sm:grid sm:grid-cols-2">
        <Card 
        name="Profile"
@@ -21,6 +21,7 @@ function DashboardPage() {
        <Card 
        name="Device Management"
        src={device_black}
+       
         />
         <Card 
         name="Reports"
