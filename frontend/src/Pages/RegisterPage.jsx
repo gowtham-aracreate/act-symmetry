@@ -1,24 +1,24 @@
-import React, { useState } from 'react'
-import axios from 'axios' 
-import Label from '../Components/Label'
-import Button from '../Components/Button'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Label from '../Components/Label';
+import Button from '../Components/Button';
 
 const RegisterPage = () => {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@$!#%*?&]{8}$/;
 
   const handlePasswordChange = (e) => {
-    const password = e.target.value;
-    setPass(password);
+    const passwordx = e.target.value;
+    setPass(passwordx);
 
-    if (!passwordRegex.test(password)) {
+    if (!passwordRegex.test(passwordx)) {
       setError("Password must contain 1 uppercase, 1 lowercase, 1 digit, 1 special character, and be exactly 8 characters long.");
     } else {
       setError('');
@@ -29,9 +29,9 @@ const RegisterPage = () => {
     setError(true);
   };
 
-   const handleBlur = () => {
+  const handleBlur = () => {
     setError(false);
-   };
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,44 +54,41 @@ const RegisterPage = () => {
       alert("Register failed. Please check your credentials.");
     }
   }
-  
+
   return (
     <div>
       <div className="@container w-150 ">
         <div className="bg-white mt-[195px] mr-[132px] ml-[130px] ">
           <h1 className="font-bold text-2xl mb-4 text-center">Register</h1>
-          <h1 className="font-base text-[16px] mb-4 text-center">Please provide your Credentials</h1>
+          <p className="text-gray-600 mb-6 text-center">Please provide user credentials to register</p>
+
           <form onSubmit={handleSubmit}>
-            <div className='flex flex-col gap-4'>
-              <div className='flex flex-col'>
+            <div className="flex flex-col gap-4 ">
+              <div className="flex flex-col">
                 <Label htmlFor="name" text="Name" className="block text-gray-700 text-sm font-bold mb-2" />
-                <input 
-                  type="text" 
-                  id="name" 
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="Please enter your Name"
+                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
                   value={name}
-                  onChange={(e) => setName(e.target.value)} 
-                  placeholder="Please enter your Name" 
-                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100" 
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className='flex flex-col'>
-                <Label 
-                  htmlFor="email" 
-                  text="Email"
-                  className="block text-gray-700 text-sm font-bold mb-2" 
-                />
-                <input 
-                  type="email" 
-                  id="email" 
+              <div className="flex flex-col">
+                <Label htmlFor="email" text="Email" className="block text-gray-700 text-sm font-bold mb-2" />
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="Please enter your Email"
+                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)} 
-                  placeholder="Please enter your Email" 
-                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100" 
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-              <div className='flex flex-col'>
+              <div className="flex flex-col">
                 <Label htmlFor="password" text="Password" className="block text-gray-700 text-sm font-bold mb-2" />
-                <input 
+                <input
                   name="pass"
                   type="text"
                   id="pass"
@@ -100,19 +97,19 @@ const RegisterPage = () => {
                   onChange={handlePasswordChange}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
-                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100" 
+                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
                 />
               </div>
               {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
-              <div className='pt-4 ml-6'>
-                <Button  id="button" type="submit">Register</Button>
+              <div className="pt-4 ml-6">
+                <Button id="button" type="submit">Register</Button>
               </div>
             </div>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default RegisterPage
+export default RegisterPage;
