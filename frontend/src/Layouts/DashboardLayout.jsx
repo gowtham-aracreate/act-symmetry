@@ -24,12 +24,27 @@ const DashboardLayout = ({children}) => {
 
         </header>
 
-        <div className="md:w-[296px]  bg-[#272C48] flex flex-col gap-4 h-screen py-[80px] pl-[10px]">
-        <DashboardCard name="Dashboard" src={vector}  />
-        <DashboardCard name="Profile" src={profile} onClick={() => navigate("/profile")} />
-        <DashboardCard name="Device Management" src={device_man} onClick={() => navigate("/device-management")}  />
-        <DashboardCard name="Reports" src={reports}  />
-        <DashboardCard name="Set User Limits" src={set_user}  />
+        <div className="w-[296px]  bg-[#272C48] flex flex-col gap-4 h-screen py-[80px] pl-[10px]">
+             <div className="flex  hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center ">
+                <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={vector} alt="Vector" />
+                <h1 className="ml-[10px] font-normal text-base text-white" onClick={()=>{navigate('/dashboard')}}>Dashboard</h1>
+            </div>
+            <div onClick={() => navigate("/profile")} className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
+                <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={profile} alt="Profile" />
+                <h1 className="ml-[10px] font-normal text-base text-white " onClick={()=>{navigate('/profile')}}>Profile</h1>
+            </div>
+            <div className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
+                 <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={device_man} alt="Device Management" />
+                 <h1 className="ml-[10px] font-normal text-base text-white">Device Management</h1>
+            </div>
+            <div className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
+                 <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={reports} alt="Reports" />
+                 <h1 className="ml-[10px] font-normal text-base text-white">Reports</h1>
+            </div>
+            <div className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
+                 <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={set_user} alt="VSet User Limits" />
+            <     h1 className="ml-[10px] font-normal text-base text-white">Set User Limits</h1>
+            </div>
             <div className="flex w-[170px] absolute ml-[19px] bottom-2 justify-start">
                  <img className="relative w-[18px] h-[18px] ml-[19px]" src={logout} alt="Logout" />
                  <h1 className="ml-[10px] font-normal text-base text-white">LOGOUT</h1>
