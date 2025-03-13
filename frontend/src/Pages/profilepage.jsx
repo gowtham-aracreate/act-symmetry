@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from '../Components/Button';
 import CreateCard from '../Components/CreateCard';
-import DashboardLayout from '../Layouts/dashboardLayout';
+import DashboardLayout from '../Layouts/DashboardLayout';
 import Table from '../Components/Table';
 import './login.css';
 
@@ -105,10 +105,14 @@ function ProfilePage() {
                 onChange={handleSearchChange}
               />
             </div>
-            <Table data={filteredData} onEditUser={handleEditUser} onDeleteUser={handleDeleteUser} getStatusColor={getStatusColor} />
+            <Table name="Username"
+                   email="Email ID"
+                   address="Address"
+                   status="Status"
+                   action="Actions" data={filteredData} onEditUser={handleEditUser} onDeleteUser={handleDeleteUser} getStatusColor={getStatusColor} />
           </div>
           {isOpen && (
-            <div className="fixed inset-0 flex items-center justify-center  bg-opacity-90">
+            <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 bg-gray-800">
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h2 className="text-xl text-[#2899CB] font-bold">Create New User</h2>
                 <form onSubmit={handleSubmit}>
@@ -144,7 +148,7 @@ function ProfilePage() {
                       /> Block
                     </div>
                     <div className="flex flex-row gap-2 pt-8 justify-end">
-                      <div role='button' className="bg-[#2899CB] text-white  cursor-pointer font-bold py-2 px-4 rounded " id="btn" onClick={handleClose}>
+                      <div role='button' className="bg-[#2899CB] text-white cursor-pointer font-bold py-2 px-4 rounded " id="btn" onClick={handleClose}>
                         Cancel
                       </div>
                       <Button className="font-bold py-2 px-4 rounded bg-[#2899CB] " id="btn" type="submit">
