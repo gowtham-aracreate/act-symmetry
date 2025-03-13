@@ -72,7 +72,7 @@ const Table = ({ data, onEditUser, onDeleteUser, name, email, address, status, a
         <table className="w-full table-fixed">
           <thead >
             <tr className="bg-[#0A2463] text-white  ">
-              <th className="pt-3 pb-3 text-center w-1/12 "><input type="checkbox" /></th>
+              <th className="pt-3 pb-3 text-center ">S.no</th>
               <th className="pt-3 pb-3 text-center w-1/12 whitespace-nowrap ">{name}</th>
               <th className="pt-3 pb-3 text-center ">{email}</th>
               <th className="pt-3 pb-3 text-center w-1/12  whitespace-nowrap">{number}</th>
@@ -83,14 +83,13 @@ const Table = ({ data, onEditUser, onDeleteUser, name, email, address, status, a
           </thead>
           <tbody>
             {currentData.map((item, index) => (
-              <tr key={index} className="border-b border-gray-300 ">
-                <td className=" text-center"><input type="checkbox" /></td>
-                <td className=" text-center">{item.name}</td>
-                <td className=" pl-11 ">{item.email}</td>
-                <td className="p-3 whitespace-nowrap">{item.number}</td>
-                <td className="p-3 text-center">{item.address}</td>
-                <td className={`text-center ${item.status === 'Active' ? 'text-green-500' : item.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{item.status}</td>
-                <td className="p-3 flex space-x-2 justify-center">
+              <tr key={index} className="border-b relative border-gray-300 ">
+                <td className="pt-3 pb-3 text-center ">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                <td className="pt-3 pb-3  text-center  ">{item.name}</td>
+                <td className="pt-3 pb-3 pl-8 text-center ">{item.email}</td>
+                <td className="pt-3 pb-3 pl-28 text-center ">{item.address}</td>
+                <td className={`pt-3 pb-3 pl-56 text-center   ${item.status === 'Active' ? 'text-green-500' : item.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{item.status}</td>
+                <td className="pt-3 pb-3 text-center flex justify-center items-center space-x-2 pl-74">
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
