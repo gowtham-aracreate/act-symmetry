@@ -95,8 +95,8 @@ const RegisterPage = () => {
                   type="checkbox" 
                   checked={showPassword} 
                   onChange={() => setShowPassword(!showPassword)} 
-                /> Show Password
-                <p className="text-gray-700 text-sm mt-1">{pass}</p>
+                  className=''
+                />
               </div>
               {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
               <div className='pt-4 ml-6'>

@@ -70,8 +70,8 @@ const Table = ({ data, onEditUser, onDeleteUser, name, email, address, status, a
     <div className="pr-10 pl-10 pt-6 ">
       <div className="overflow-x-auto rounded-lg">
         <table className="w-full table-fixed">
-          <thead>
-            <tr className="bg-[#0A2463] text-white ">
+          <thead >
+            <tr className="bg-[#0A2463] text-white  ">
               <th className="pt-3 pb-3 text-center w-1/12 "><input type="checkbox" /></th>
               <th className="pt-3 pb-3 text-center w-1/12 whitespace-nowrap ">{name}</th>
               <th className="pt-3 pb-3 text-center ">{email}</th>
@@ -84,13 +84,13 @@ const Table = ({ data, onEditUser, onDeleteUser, name, email, address, status, a
           <tbody>
             {currentData.map((item, index) => (
               <tr key={index} className="border-b border-gray-300 ">
-                <td className="p-3"><input type="checkbox" /></td>
-                <td className="p-3">{item.name}</td>
-                <td className="p-3">{item.email}</td>
+                <td className=" text-center"><input type="checkbox" /></td>
+                <td className=" text-center">{item.name}</td>
+                <td className=" pl-11 ">{item.email}</td>
                 <td className="p-3 whitespace-nowrap">{item.number}</td>
-                <td className="p-3">{item.address}</td>
-                <td className={`p-3 ${item.status === 'Active' ? 'text-green-500' : item.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{item.status}</td>
-                <td className="p-3 flex space-x-2 ">
+                <td className="p-3 text-center">{item.address}</td>
+                <td className={`text-center ${item.status === 'Active' ? 'text-green-500' : item.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{item.status}</td>
+                <td className="p-3 flex space-x-2 justify-center">
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
