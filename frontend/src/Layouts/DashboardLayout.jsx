@@ -8,56 +8,52 @@ import logout from '../assets/images/logout.png'
 import admin_logo from '../assets/images/admin_logo.png'
 import notification_head from '../assets/images/notification_head.png'
 import profile_head from '../assets/images/profile_head.png'
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const DashboardLayout = ({children}) => {
+const DashboardLayout = ({ children }) => {
      const navigate = useNavigate();
-  return (
-    <div className='md:h-screen  bg-[#272C48] relative flex flex-row'>
-        <header className='h-[60px] w-full fixed top-0 left-0 bg-[#FFFFFF]'>
-             <img className='w-[120px] h-[60px] ml-[25px]' src={admin_logo} alt="" />
-             <div className='flex absolute bottom-5 right-10 gap-8'>
-               <img className='w-[25px] h-[25px]' src={notification_head} alt="" />
-               <img className='w-[25px] h-[25px]' src={profile_head} alt="" />
-             </div>
+     return (
+          <div className='md:h-screen bg-gray-100 flex'>
+               <header className='fixed top-0 left-0 w-full h-[65px] bg-white  flex items-center justify-between px-6'>
+                    <img className='w-[120px] h-[60px]' src={admin_logo} alt="Admin Logo" />
+                    <div className='flex items-center space-x-4'>
+                         <img className='w-[25px] h-[25px] cursor-pointer' src={notification_head} alt="Notifications" />
+                         <img className='w-[25px] h-[25px] cursor-pointer' src={profile_head} alt="Profile" />
+                    </div>
+               </header>
 
-        </header>
+               <aside className="w-[296px] bg-white flex flex-col gap-4 h-screen pt-[80px] pl-[10px]">
+                    <div className="flex items-center hover:bg-blue-600  text-black hover:text-white w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105" onClick={() => { navigate('/dashboard') }}>
+                         <img className="w-[18.67px] h-[18.67px] ml-[19px]" src={vector} alt="Dashboard" />
+                         <h1 className="ml-[10px]">Dashboard</h1>
+                    </div>
+                    <div className="flex items-center hover:bg-blue-600  text-black hover:text-white  w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105" onClick={() => navigate("/profile")}>
+                         <img className="w-[18.67px] h-[18.67px] ml-[19px]" src={profile} alt="Profile" />
+                         <h1 className="ml-[10px]">Profile</h1>
+                    </div>
+                    <div className="flex items-center hover:bg-blue-600  text-black hover:text-white w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105" onClick={() => navigate('/device-management')}>
+                         <img className="w-[18.67px] h-[18.67px] ml-[19px]" src={device_man} alt="Device Management" />
+                         <h1 className="ml-[10px]">Device Management</h1>
+                    </div>
+                    <div className="flex items-center hover:bg-blue-600 text-black hover:text-white w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105">
+                         <img className="w-[18.67px] h-[18.67px] ml-[19px]" src={reports} alt="Reports" />
+                         <h1 className="ml-[10px]">Reports</h1>
+                    </div>
+                    <div className="flex items-center hover:bg-blue-600  text-black hover:text-white w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105">
+                         <img className="w-[18.67px] h-[18.67px] ml-[19px]" src={set_user} alt="Set User Limits" />
+                         <h1 className="ml-[10px]">Set User Limits</h1>
+                    </div>
+                    <div className="flex items-center w-[170px] absolute bottom-2 ml-[19px] cursor-pointer" onClick={() => navigate('/')}>
+                         <img className="w-50% h-50%" src={logout} alt="Logout" />
+                         <h1 className="ml-[10px]">LOGOUT</h1>
+                    </div>
+               </aside>
 
-        <div className="w-[296px]  bg-[#272C48] flex flex-col gap-4 h-screen py-[80px] pl-[10px]">
-             <div className="flex  hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center ">
-                <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={vector} alt="Vector" />
-                <h1 className="ml-[10px] font-normal text-base text-white" onClick={()=>{navigate('/dashboard')}}>Dashboard</h1>
-            </div>
-            <div onClick={() => navigate("/profile")} className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
-                <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={profile} alt="Profile" />
-                <h1 className="ml-[10px] font-normal text-base text-white " onClick={()=>{navigate('/profile')}}>Profile</h1>
-            </div>
-            <div onClick={()=> navigate('/device-management')} className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
-                 <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={device_man} alt="Device Management" />
-                 <h1 className="ml-[10px] font-normal text-base text-white">Device Management</h1>
-            </div>
-            <div className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
-                 <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={reports} alt="Reports" />
-                 <h1 className="ml-[10px] font-normal text-base text-white">Reports</h1>
-            </div>
-            <div className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
-                 <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={set_user} alt="VSet User Limits" />
-            <     h1 className="ml-[10px] font-normal text-base text-white">Set User Limits</h1>
-            </div>
-            <div className="flex w-[170px] absolute ml-[19px] bottom-2 justify-start">
-                 <img className="relative w-[18px] h-[18px] ml-[19px]" src={logout} alt="Logout" />
-                 <h1 onClick={()=>navigate('/')} className="ml-[10px] font-normal text-base text-white cursor-pointer">LOGOUT</h1>
-            </div>  
-        </div>
-            
-        <div className='w-full h-full bg-gray-100 pt-[75px]'>
-            {children}
-        </div>
-
-
-
-    </div>
-  )
+               <main className='w-full h-full pt-[75px]'>
+                    {children}
+               </main>
+          </div>
+     )
 }
 
 export default DashboardLayout

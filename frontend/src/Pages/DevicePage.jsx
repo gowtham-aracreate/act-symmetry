@@ -84,25 +84,25 @@ const DevicePage = () => {
         <DashboardLayout>
             <div className="overflow-x-auto">
                 <div className="flex w-full items-center pb-6">
-                    <h1 className="pl-10 font-semibold text-[32px] text-[#2899CB]">Device Management</h1>
+                    <h1 className="pl-10 font-semibold text-[32px] text-blue-600">Device Management</h1>
                     <div className="absolute right-9">
-                        <Button className="bg-[#2899CB] text-black border-[#2899CB] border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
+                        <Button className="bg-blue-600 text-black border-blue-600 border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
                             ADD DEVICE
                         </Button>
                     </div>
                 </div>
                 <div className="ml-10 mr-9 flex flex-row gap-14 border-b-2 border-gray-200 w-auto">
                     <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('mapping')}>
-                        <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-[#2899CB] ${activeTab === 'mapping' ? 'text-[#2899CB]' : ''}`}>
+                        <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-blue-600 ${activeTab === 'mapping' ? 'text-blue-600' : ''}`}>
                             Device Mapping
                         </h1>
-                        <div className={`w-full border-b-2 ${activeTab === 'mapping' ? 'border-[#2899CB]' : 'border-transparent'} mt-1`}></div>
+                        <div className={`w-full border-b-2 ${activeTab === 'mapping' ? 'border-blue-600' : 'border-transparent'} mt-1`}></div>
                     </div>
                     <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('addition')}>
-                        <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-[#2899CB] ${activeTab === 'addition' ? 'text-[#2899CB]' : ''}`}>
+                        <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-blue-600 ${activeTab === 'addition' ? 'text-blue-600' : ''}`}>
                             Device Addition
                         </h1>
-                        <div className={`w-full border-b-2 ${activeTab === 'addition' ? 'border-[#2899CB]' : 'border-transparent'} mt-1`}></div>
+                        <div className={`w-full border-b-2 ${activeTab === 'addition' ? 'border-blue-600' : 'border-transparent'} mt-1`}></div>
                     </div>
                 </div>
                 <div className="pl-10 mb-6 mt-4">
@@ -138,7 +138,7 @@ const DevicePage = () => {
                     isOpen && (
                         <div className="fixed inset-0 flex items-center justify-center">
                             <div className="bg-white p-6 rounded-lg shadow-lg">
-                                <h2 className="text-xl text-[#2899CB] font-bold">ADD NEW DEVICE</h2>
+                                <h2 className="text-xl text-blue-600 font-bold">ADD NEW DEVICE</h2>
 
                                 <form onSubmit={handleSubmit}>
                                     <div className="flex flex-col gap-5 justify-center mt-5">
@@ -147,10 +147,10 @@ const DevicePage = () => {
                                         <CreateCard placeholder="MAC Address" name="macid" value={newUsers.macid} onChange={handleChange} />
                                     </div>
                                     <div className="flex flex-row gap-2 pt-8 justify-end">
-                                        <Button className="bg-[#2899CB] text-[#2899CB] border-1 border-[#2899CB] cursor-pointer font-bold py-2 px-4 rounded" id="btn" onClick={handleClose}>
+                                        <Button className="bg-blue-600 text-blue-600 border-1 border-blue-600 cursor-pointer font-bold py-2 px-4 rounded" id="btn" onClick={handleClose}>
                                             CANCEL
                                         </Button>
-                                        <Button className="font-bold py-2 px-4 rounded border-1 border-[#2899CB] text-[#2899CB] bg-[#2899CB]" id="btn" type="submit">
+                                        <Button className="font-bold py-2 px-4 rounded border-1 border-blue-600 text-blue-600 bg-blue-600" id="btn" type="submit">
                                             SAVE
                                         </Button>
                                     </div>

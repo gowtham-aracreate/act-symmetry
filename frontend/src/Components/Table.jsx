@@ -86,7 +86,7 @@ const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
       <div className="overflow-x-auto rounded-lg">
         <table className="w-full table-fixed">
           <thead>
-            <tr className="bg-[#0A2463] text-white">
+            <tr className="bg-blue-600 text-white">
               <th className="p-3 text-center" style={{ width: `calc(${columnWidth} / 2)` }}>S.No</th>
               {columns.map((column, index) => (
                 <th key={index} className="p-3 text-center" style={{ width: columnWidth }}>
@@ -106,9 +106,9 @@ const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
                   </td>
                 ))}
                 <td className="p-3 text-center flex justify-center items-center space-x-2">
-                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
-                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
-                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
+                  <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
+                  <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
+                  <button className="text-red-600 hover:text-red-800 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
                 </td>
               </tr>
             ))}
