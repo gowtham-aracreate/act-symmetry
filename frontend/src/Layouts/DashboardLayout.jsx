@@ -9,12 +9,11 @@ import admin_logo from '../assets/images/admin_logo.png'
 import notification_head from '../assets/images/notification_head.png'
 import profile_head from '../assets/images/profile_head.png'
 import {useNavigate} from "react-router-dom";
-// import DashboardCard from '../Components/DashboardCard'
 
 const DashboardLayout = ({children}) => {
      const navigate = useNavigate();
   return (
-    <div className='md:h-screen  bg-[#272C48] relative flex flex-row z-50'>
+    <div className='md:h-screen  bg-[#272C48] relative flex flex-row'>
         <header className='h-[60px] w-full fixed top-0 left-0 bg-[#FFFFFF]'>
              <img className='w-[120px] h-[60px] ml-[25px]' src={admin_logo} alt="" />
              <div className='flex absolute bottom-5 right-10 gap-8'>
@@ -47,7 +46,7 @@ const DashboardLayout = ({children}) => {
             </div>
             <div className="flex w-[170px] absolute ml-[19px] bottom-2 justify-start">
                  <img className="relative w-[18px] h-[18px] ml-[19px]" src={logout} alt="Logout" />
-                 <h1 onClick={()=>navigate('/')} className="ml-[10px] font-normal text-base text-white cursor-pointer">LOGOUT</h1>
+                 <h1 className="ml-[10px] font-normal text-base text-white">LOGOUT</h1>
             </div>  
         </div>
             

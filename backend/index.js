@@ -36,16 +36,6 @@ const createdUserSchema = new mongoose.Schema({
 
 const CreatedUsers = mongoose.model("createdUsers", createdUserSchema);
 
-const newDeviceSchema = new mongoose.Schema({
-    dname:  { type: String, required: true },
-    dnum: { type: Number, required: true },
-    macid: { type: String, required: true }
-})
-
-const NewDeviceUsers = mongoose.model("newdevice",newDeviceSchema)
-
-
-
 app.post('/create', async (req, res) => {
     const { name, email, password } = req.body;
     try {
@@ -82,17 +72,6 @@ app.post('/createExtended', async (req, res) => {
         res.status(500).send('Error creating extended user');
     }
 });
-
-app.post('/newdevice', async(req, res) => {
-    try {
-        const { dname, dnum, macid } = req.body;
-        const newDevice = new NewDeviceUsers({ dname, dnum, macid });
-        await newDevice.save();
-        res.status(201).json({ message: "Device added successfully!" });
-      } catch (error) {
-        res.status(500).json({ error: "Error saving device" });
-      }
-})
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
