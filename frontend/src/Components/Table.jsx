@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Eye, Edit, Trash } from "lucide-react";
 import Modal from './Modals';
 
-const Table = ({ data, onEditUser, onDeleteUser, name, address, email, status, action, number, showDeviceColumns }) => {
+const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalMode, setModalMode] = useState('view'); // 'view', 'edit', 'delete', 'add'
-  const itemsPerPage = 7;
+  const itemsPerPage = 5;
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   const handleClick = (page) => {
@@ -61,10 +61,25 @@ const Table = ({ data, onEditUser, onDeleteUser, name, address, email, status, a
     setSelectedUser(null);
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Active':
+        return 'text-green-500';
+      case 'Inactive':
+        return 'text-orange-500';
+      case 'Block':
+        return 'text-red-500';
+      default:
+        return '';
+    }
+  };
+
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const columnWidth = `${100 / (columns.length + 1.5)}%`; // +1.5 to account for S.No (0.5) and Actions (1) columns
 
   return (
     <div className="pr-10 pl-10 pt-6 ">
@@ -72,38 +87,24 @@ const Table = ({ data, onEditUser, onDeleteUser, name, address, email, status, a
         <table className="w-full table-fixed">
           <thead>
             <tr className="bg-[#0A2463] text-white">
-              <th className="p-3 text-center w-1/12">S.No</th>
-              <th className="p-3 text-center w-1/5">{name}</th>
-              <th className="p-3 text-center w-1/5">{number}</th>
-              <th className="p-3 text-center w-1/5">{email}</th>
-              <th className="p-3 text-center w-1/5">{address}</th>
-              {showDeviceColumns && (
-                <>
-                  <th className="p-3 text-center w-1/5">DName</th>
-                  <th className="p-3 text-center w-1/5">DNum</th>
-                  <th className="p-3 text-center w-1/5">MacID</th>
-                </>
-              )}
-              <th className="p-3 pl-10 text-center w-1/5">{status}</th>
-              <th className="p-3 text-center w-1/5">{action}</th>
+              <th className="p-3 text-center" style={{ width: `calc(${columnWidth} / 2)` }}>S.No</th>
+              {columns.map((column, index) => (
+                <th key={index} className="p-3 text-center" style={{ width: columnWidth }}>
+                  {column}
+                </th>
+              ))}
+              <th className="p-3 text-center" style={{ width: columnWidth }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {currentData.map((item, index) => (
               <tr key={index} className="border-b border-gray-300 ">
-                <td className="p-3 text-center ">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                <td className="p-3 text-center break-words">{item.name}</td>
-                <td className="p-3 text-center break-words">{item.number}</td>
-                <td className="p-3 text-center break-words">{item.email}</td>
-                <td className="p-3 text-center break-words">{item.address}</td>
-                {showDeviceColumns && (
-                  <>
-                    <td className="p-3 text-center break-words">{item.dname}</td>
-                    <td className="p-3 text-center break-words">{item.dnum}</td>
-                    <td className="p-3 text-center break-words">{item.macid}</td>
-                  </>
-                )}
-                <td className={`p-3 text-center pl-10 break-words ${item.status === 'Active' ? 'text-green-500' : item.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{item.status}</td>
+                <td className="p-3 text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                {columns.map((column, colIndex) => (
+                  <td key={colIndex} className={`p-3 text-center break-words ${column.toLowerCase() === 'status' ? getStatusColor(item[column.toLowerCase()]) : ''}`}>
+                    {item[column.toLowerCase()]}
+                  </td>
+                ))}
                 <td className="p-3 text-center flex justify-center items-center space-x-2">
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
@@ -117,7 +118,7 @@ const Table = ({ data, onEditUser, onDeleteUser, name, address, email, status, a
       <div className="flex justify-end items-center mt-4">
         <button onClick={handlePrevious} className="px-3 py-1 border-[1px] border-gray-300 rounded cursor-pointer" disabled={currentPage === 1}>&lt;</button>
         <div className="flex space-x-1 ml-2 cursor-pointer">
-          {[...Array(5)].map((_, index) => (
+          {[...Array(totalPages)].map((_, index) => (
             <button
               key={index + 1}
               onClick={() => handleClick(index + 1)}

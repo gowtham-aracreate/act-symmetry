@@ -125,10 +125,7 @@ const DevicePage = () => {
                 {
                     activeTab === 'mapping' && (
                         <Table
-                            name="Device Name"
-                            number="Device Number"
-                            status="MAC ID"
-                            action="Actions"
+                            columns={["Device Name", "Device Unique Number", "MAC ID"]}
                             data={filteredData}
                             onEditUser={handleEditDevice}
                             onDeleteUser={handleDeleteDevice}
@@ -139,10 +136,7 @@ const DevicePage = () => {
                 {
                     activeTab === 'addition' && (
                         <Table
-                            dname="Username"
-                            number="Added Device"
-                            status="Status"
-                            action="Actions"
+                            columns={["Username", "Added Device", "Status"]}
                             data={filteredData}
                             onEditUser={handleEditDevice}
                             onDeleteUser={handleDeleteDevice}
