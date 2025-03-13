@@ -102,7 +102,7 @@ const Table = ({ data, onEditUser, onDeleteUser, name, email, address, status, a
       <div className="flex justify-end items-center mt-4">
         <button onClick={handlePrevious} className="px-3 py-1 border-[1px] border-gray-300 rounded cursor-pointer" disabled={currentPage === 1}>&lt;</button>
         <div className="flex space-x-1 ml-2 cursor-pointer">
-          {[...Array(totalPages)].map((_, index) => (
+          {[...Array(5)].map((_, index) => (
             <button
               key={index + 1}
               onClick={() => handleClick(index + 1)}
