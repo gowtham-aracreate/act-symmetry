@@ -36,6 +36,14 @@ const createdUserSchema = new mongoose.Schema({
 
 const CreatedUsers = mongoose.model("createdUsers", createdUserSchema);
 
+const deviceSchema = new mongoose.Schema({
+    name: String,
+    deviceId: { type: String, unique: true },
+    status: String
+});
+
+const Devices = mongoose.model("devices", deviceSchema);
+
 app.post('/create', async (req, res) => {
     const { name, email, password } = req.body;
     try {
@@ -108,6 +116,16 @@ app.get('/createdUsers', async (req, res) => {
     } catch (error) {
         console.error('Error fetching extended users', error);
         res.status(500).send('Error fetching extended users');
+    }
+});
+
+app.get('/devices', async (req, res) => {
+    try {
+        const data = await Devices.find();
+        res.json(data);
+    } catch (error) {
+        console.error('Error fetching devices', error);
+        res.status(500).send('Error fetching devices');
     }
 });
 

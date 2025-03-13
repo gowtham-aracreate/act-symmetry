@@ -83,6 +83,8 @@ function ProfilePage() {
     row.address.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const columns = ["Name", "Email", "Address", "Status"];
+
   return (
     <DashboardLayout>
       <div className="flex">
@@ -105,7 +107,13 @@ function ProfilePage() {
                 onChange={handleSearchChange}
               />
             </div>
-            <Table data={filteredData} onEditUser={handleEditUser} onDeleteUser={handleDeleteUser} getStatusColor={getStatusColor} />
+            <Table
+              columns={columns}
+              data={filteredData}
+              onEditUser={handleEditUser}
+              onDeleteUser={handleDeleteUser}
+              getStatusColor={getStatusColor}
+            />
           </div>
           {isOpen && (
             <div className="fixed inset-0 flex items-center justify-center  bg-opacity-90">

@@ -117,10 +117,7 @@ const DevicePage = () => {
                 {
                     activeTab === 'mapping' && (
                         <Table
-                            name="Device Name"
-                            number="Device Unique Number"
-                            status="MAC ID"
-                            action="Actions"
+                            columns={["Device Name", "Device Unique Number", "MAC ID"]}
                             data={filteredData}
                             onEditUser={handleEditDevice}
                             onDeleteUser={handleDeleteDevice}
@@ -130,10 +127,7 @@ const DevicePage = () => {
                 {
                     activeTab === 'addition' && (
                         <Table
-                            name="Username"
-                            number="Added Device"
-                            status="Status"
-                            action="Actions"
+                            columns={["Username", "Added Device", "Status"]}
                             data={filteredData}
                             onEditUser={handleEditDevice}
                             onDeleteUser={handleDeleteDevice}
@@ -142,7 +136,7 @@ const DevicePage = () => {
                 }
                 {
                     isOpen && (
-                        <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 bg-gray-800">
+                        <div className="fixed inset-0 flex items-center justify-center">
                             <div className="bg-white p-6 rounded-lg shadow-lg">
                                 <h2 className="text-xl text-[#2899CB] font-bold">ADD NEW DEVICE</h2>
 
