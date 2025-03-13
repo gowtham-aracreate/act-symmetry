@@ -42,9 +42,7 @@ const newDeviceSchema = new mongoose.Schema({
     macid: { type: String, required: true }
 })
 
-const NewDeviceUsers = mongoose.model("newdevice",newDeviceSchema)
-
-
+const NewDeviceUsers = mongoose.model("newdevice", newDeviceSchema)
 
 app.post('/create', async (req, res) => {
     const { name, email, password } = req.body;
@@ -88,11 +86,21 @@ app.post('/newdevice', async(req, res) => {
         const { dname, dnum, macid } = req.body;
         const newDevice = new NewDeviceUsers({ dname, dnum, macid });
         await newDevice.save();
-        res.status(201).json({ message: "Device added successfully!" });
-      } catch (error) {
+        res.status(201).json(newDevice);
+    } catch (error) {
         res.status(500).json({ error: "Error saving device" });
-      }
-})
+    }
+});
+
+app.get('/newdevice', async (req, res) => {
+    try {
+        const devices = await NewDeviceUsers.find();
+        res.json(devices);
+    } catch (error) {
+        console.error('Error fetching devices', error);
+        res.status(500).send('Error fetching devices');
+    }
+});
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;

@@ -33,7 +33,7 @@ const DashboardLayout = ({children}) => {
                 <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={profile} alt="Profile" />
                 <h1 className="ml-[10px] font-normal text-base text-white " onClick={()=>{navigate('/profile')}}>Profile</h1>
             </div>
-            <div className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
+            <div onClick={()=> navigate('/device-management')} className="flex bg-[#272C48] hover:bg-[#2899CB] w-[220px] h-[44px] rounded-r-3xl items-center">
                  <img className="relative w-[18.666667938232422px] h-[18.666667938232422px] ml-[19px]" src={device_man} alt="Device Management" />
                  <h1 className="ml-[10px] font-normal text-base text-white">Device Management</h1>
             </div>
