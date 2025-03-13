@@ -46,7 +46,7 @@ const DashboardLayout = ({children}) => {
             </div>
             <div className="flex w-[170px] absolute ml-[19px] bottom-2 justify-start">
                  <img className="relative w-[18px] h-[18px] ml-[19px]" src={logout} alt="Logout" />
-                 <h1 className="ml-[10px] font-normal text-base text-white">LOGOUT</h1>
+                 <h1 onClick={()=> navigate('/')} className="ml-[10px] font-normal text-base text-white cursor-pointer">LOGOUT</h1>
             </div>  
         </div>
             

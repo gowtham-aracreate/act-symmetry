@@ -52,7 +52,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
             </div>
             <div className="flex">
               <p><strong>Status</strong></p>
-              <p className={`ml-22 ${user.status === 'Active' ? 'text-green-500' : user.status === 'Inactive' ? 'text-orange-500' : 'text-red-500'}`}>{user.status}</p>
+              <p className={`ml-22 ${user.status === 'Active' ? 'text-green-500' : user.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{user.status}</p>
             </div>
             <div className="flex justify-end mt-4 space-x-2">
               <button onClick={() => setFormData(user) || setModalMode('edit')} className="bg-[#2899CB] text-white font-bold py-2 px-4 rounded cursor-pointer">Edit</button>
@@ -76,7 +76,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
                 type="text"
                 name="name"
                 value={formData.name}
-                onChange={handleChange}
+              
                 className="p-2 border border-gray-300 rounded"
               />
             </div>
@@ -86,7 +86,6 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
                 type="email"
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
                 className="p-2 border border-gray-300 rounded"
               />
             </div>
@@ -96,6 +95,16 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
                 type="text"
                 name="address"
                 value={formData.address}
+                onChange={handleChange}
+                className="p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label><strong>Pin</strong></label>
+              <input
+                type="text"
+                name="pin"
+                value={formData.pin}
                 onChange={handleChange}
                 className="p-2 border border-gray-300 rounded"
               />
