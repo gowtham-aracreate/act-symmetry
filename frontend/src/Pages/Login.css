@@ -7,14 +7,14 @@ body{
 
 #button{
     background-color: rgba(40, 153, 203, 1);
-    
+    cursor: pointer;
     width: 270px;
     height: 48px;
     border-radius: 25px;
     color: white;
     align-items: center;
     justify-content: center;
-    display: flex;
+    
 
 }
 
@@ -26,3 +26,4 @@ body{
 #eye-btn:focus{
     outline: none;
 }
+  
