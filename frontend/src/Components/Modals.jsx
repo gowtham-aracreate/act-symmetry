@@ -29,10 +29,12 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 bg-gray-800">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl text-[#2899CB] font-bold">{mode === 'edit' ? 'EDIT USER DETAILS' : mode === 'delete' ? 'DELETE USER' : 'VIEW USER DETAILS'}</h2>
+          <h2 className="text-xl text-[#2899CB] font-bold">
+            {mode === 'edit' ? 'EDIT USER DETAILS' : mode === 'delete' ? 'DELETE USER' : 'VIEW USER DETAILS'}
+          </h2>
           <button onClick={onClose} className="text-black bg-white cursor-pointer text-lg font-bold">X</button>
         </div>
         <hr className="w-full my-4" />
@@ -104,21 +106,21 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
               <label><strong>Status</strong></label>
               <div className="flex flex-row gap-6 pt-[5px]">
                 <input
-                  type="checkbox"
+                  type="radio"
                   name="status"
                   value="Active"
                   checked={formData.status === 'Active'}
                   onChange={handleChange}
                 /> Active
                 <input
-                  type="checkbox"
+                  type="radio"
                   name="status"
                   value="Inactive"
                   checked={formData.status === 'Inactive'}
                   onChange={handleChange}
                 /> Inactive
                 <input
-                  type="checkbox"
+                  type="radio"
                   name="status"
                   value="Block"
                   checked={formData.status === 'Block'}
