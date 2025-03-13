@@ -5,6 +5,7 @@ import ForgetPassword from './Pages/ForgetPassword';
 import RegisterPage from './Pages/RegisterPage';
 import DashboardPage from './Pages/dashboardpage';
 import ProfilePage from './Pages/profilepage';
+import DevicePage from './Pages/DevicePage';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/device-management" element={<DevicePage />} />
         </Routes>
       </Router>
     </div>
