@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Eye, Edit, Trash } from "lucide-react";
 import Modal from './modal';
 
-const Table = ({ data, onEditUser, onDeleteUser }) => {
+const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalMode, setModalMode] = useState('view'); // 'view', 'edit', 'delete', 'add'
-  const itemsPerPage = 7;
+  const itemsPerPage = 5;
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   const handleClick = (page) => {
@@ -61,37 +61,54 @@ const Table = ({ data, onEditUser, onDeleteUser }) => {
     setSelectedUser(null);
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Active':
+        return 'text-green-500';
+      case 'Inactive':
+        return 'text-orange-500';
+      case 'Block':
+        return 'text-red-500';
+      default:
+        return '';
+    }
+  };
+
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  const columnWidth = `${100 / (columns.length + 1.5)}%`; // +1.5 to account for S.No (0.5) and Actions (1) columns
+
   return (
     <div className="pr-10 pl-10 pt-6 ">
       <div className="overflow-x-auto rounded-lg">
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <thead>
-            <tr className="bg-[#0A2463] text-white">
-              <th className="p-3 text-left"><input type="checkbox" /></th>
-              <th className="p-3 text-left">Username</th>
-              <th className="p-3 text-left">Email ID</th>
-              <th className="p-3 text-left">Address</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-left">Actions</th>
+            <tr className="bg-blue-600 text-white">
+              <th className="p-3 text-center" style={{ width: `calc(${columnWidth} / 2)` }}>S.No</th>
+              {columns.map((column, index) => (
+                <th key={index} className="p-3 text-center" style={{ width: columnWidth }}>
+                  {column}
+                </th>
+              ))}
+              <th className="p-3 text-center" style={{ width: columnWidth }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {currentData.map((item, index) => (
               <tr key={index} className="border-b border-gray-300 ">
-                <td className="p-3"><input type="checkbox" /></td>
-                <td className="p-3">{item.name}</td>
-                <td className="p-3">{item.email}</td>
-                <td className="p-3">{item.address}</td>
-                <td className={`p-3 ${item.status === 'Active' ? 'text-green-500' : item.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{item.status}</td>
-                <td className="p-3 flex space-x-2 ">
-                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
-                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
-                  <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
+                <td className="p-3 text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                {columns.map((column, colIndex) => (
+                  <td key={colIndex} className={`p-3 text-center break-words ${column.toLowerCase() === 'status' ? getStatusColor(item[column.toLowerCase()]) : ''}`}>
+                    {item[column.toLowerCase()]}
+                  </td>
+                ))}
+                <td className="p-3 text-center flex justify-center items-center space-x-2">
+                  <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
+                  <button className="text-blue-600 hover:text-blue-800 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
+                  <button className="text-red-600 hover:text-red-800 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
                 </td>
               </tr>
             ))}
@@ -101,7 +118,7 @@ const Table = ({ data, onEditUser, onDeleteUser }) => {
       <div className="flex justify-end items-center mt-4">
         <button onClick={handlePrevious} className="px-3 py-1 border-[1px] border-gray-300 rounded cursor-pointer" disabled={currentPage === 1}>&lt;</button>
         <div className="flex space-x-1 ml-2 cursor-pointer">
-          {[...Array(5)].map((_, index) => (
+          {[...Array(totalPages)].map((_, index) => (
             <button
               key={index + 1}
               onClick={() => handleClick(index + 1)}
