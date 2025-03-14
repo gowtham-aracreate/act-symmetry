@@ -37,9 +37,9 @@ const createdUserSchema = new mongoose.Schema({
 const CreatedUsers = mongoose.model("createdUsers", createdUserSchema);
 
 const deviceSchema = new mongoose.Schema({
-    name: String,
-    deviceId: { type: String, unique: true },
-    status: String
+    dname: String,
+    dnum: { type: String, unique: true },
+    macid: String
 });
 
 const Devices = mongoose.model("devices", deviceSchema);
@@ -81,20 +81,21 @@ app.post('/createExtended', async (req, res) => {
     }
 });
 
-app.post('/newdevice', async(req, res) => {
+app.post('/newdevice', async (req, res) => {
     try {
         const { dname, dnum, macid } = req.body;
-        const newDevice = new NewDeviceUsers({ dname, dnum, macid });
+        const newDevice = new Devices({ dname, dnum, macid });
         await newDevice.save();
         res.status(201).json(newDevice);
     } catch (error) {
+        console.error('Error saving device', error);
         res.status(500).json({ error: "Error saving device" });
     }
 });
 
 app.get('/newdevice', async (req, res) => {
     try {
-        const devices = await NewDeviceUsers.find();
+        const devices = await Devices.find();
         res.json(devices);
     } catch (error) {
         console.error('Error fetching devices', error);

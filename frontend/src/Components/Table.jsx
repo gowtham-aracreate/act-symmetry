@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Eye, Edit, Trash } from "lucide-react";
 import Modal from './Modals';
 
-const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
+const Table = ({ data, onEditUser, onDeleteUser, columns, showDeviceColumns }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [modalMode, setModalMode] = useState('view'); // 'view', 'edit', 'delete', 'add'
+  const [modalMode, setModalMode] = useState('view');
   const itemsPerPage = 5;
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
@@ -79,7 +79,7 @@ const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
     currentPage * itemsPerPage
   );
 
-  const columnWidth = `${100 / (columns.length + 1.5)}%`; // +1.5 to account for S.No (0.5) and Actions (1) columns
+  const columnWidth = `${100 / (columns.length + 1.5)}%`; 
 
   return (
     <div className="pr-10 pl-10 pt-6 ">
@@ -100,11 +100,20 @@ const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
             {currentData.map((item, index) => (
               <tr key={index} className="border-b border-gray-300 ">
                 <td className="p-3 text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                {columns.map((column, colIndex) => (
-                  <td key={colIndex} className={`p-3 text-center break-words ${column.toLowerCase() === 'status' ? getStatusColor(item[column.toLowerCase()]) : ''}`}>
-                    {item[column.toLowerCase()]}
-                  </td>
-                ))}
+                {showDeviceColumns ? (
+                  <>
+                    <td className="p-3 text-center">{item.dname}</td>
+                    <td className="p-3 text-center">{item.dnum}</td>
+                    <td className="p-3 text-center">{item.macid}</td>
+                  </>
+                ) : (
+                  <>
+                    <td className="p-3 text-center">{item.name}</td>
+                    <td className="p-3 text-center">{item.email}</td>
+                    <td className="p-3 text-center">{item.address}</td>
+                    <td className={`p-3 text-center ${getStatusColor(item.status)}`}>{item.status}</td>
+                  </>
+                )}
                 <td className="p-3 text-center flex justify-center items-center space-x-2">
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
                   <button className="text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
@@ -137,8 +146,8 @@ const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
         mode={modalMode}
         onSave={handleSaveUser}
         onEdit={handleSaveUser}
-        onDelete={handleConfirmDeleteUser} // Pass handleConfirmDeleteUser to Modal
-        setModalMode={setModalMode} // Pass setModalMode to Modal
+        onDelete={handleConfirmDeleteUser} 
+        setModalMode={setModalMode} 
       />
     </div>
   );

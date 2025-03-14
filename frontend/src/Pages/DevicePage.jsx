@@ -22,7 +22,8 @@ const DevicePage = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         console.log(`Updating ${name} to ${value}`);
-        setNewDevice({ ...newDevice, [e.target.name]: e.target.value })};
+        setNewDevice({ ...newDevice, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,14 +40,13 @@ const DevicePage = () => {
                 fetchData();
             }
         } catch (error) {
-            console.error("Error creating device:", error);
+            console.error("Error creating device:", error.response ? error.response.data : error.message);
         }
     };
 
     const fetchData = async () => {
         try {
             const response = await axios.get("http://localhost:4000/newdevice");
-            
             setData(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);

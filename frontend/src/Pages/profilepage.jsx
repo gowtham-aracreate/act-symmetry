@@ -107,13 +107,6 @@ function ProfilePage() {
                 onChange={handleSearchChange}
               />
             </div>
-<<<<<<< HEAD
-            <Table name="Username"
-                   email="Email ID"
-                   address="Address"
-                   status="Status"
-                   action="Actions" data={filteredData} onEditUser={handleEditUser} onDeleteUser={handleDeleteUser} getStatusColor={getStatusColor} />
-=======
             <Table
               columns={columns}
               data={filteredData}
@@ -121,10 +114,9 @@ function ProfilePage() {
               onDeleteUser={handleDeleteUser}
               getStatusColor={getStatusColor}
             />
->>>>>>> f23b4a25914698b934a2f0d4d2567d9835fb2c2b
           </div>
           {isOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 bg-gray-800">
+            <div className="fixed inset-0 flex items-center justify-center ">
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h2 className="text-xl text-[#2899CB] font-bold">Create New User</h2>
                 <form onSubmit={handleSubmit}>
