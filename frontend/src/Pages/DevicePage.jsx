@@ -86,33 +86,35 @@ const DevicePage = () => {
                 <div className="flex w-full items-center pb-6">
                     <h1 className="pl-10 font-semibold text-[32px] text-blue-600">Device Management</h1>
                     <div className="absolute right-9">
-                        <Button className="bg-blue-600 text-black border-blue-600 border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
+                        <Button className="bg-blue-600 text-white border-blue-600 border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
                             ADD DEVICE
                         </Button>
                     </div>
                 </div>
                 <div className="ml-10 mr-9 flex flex-row gap-14 border-b-2 border-gray-200 w-auto">
                     <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('mapping')}>
-                        <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-blue-600 ${activeTab === 'mapping' ? 'text-blue-600' : ''}`}>
+                        <h1 className={`font-semibold text-[20px] text-blue-600 hover:text-red-600 ${activeTab === 'mapping' ? 'text-blue-600' : ''}`}>
                             Device Mapping
                         </h1>
-                        <div className={`w-full border-b-2 ${activeTab === 'mapping' ? 'border-blue-600' : 'border-transparent'} mt-1`}></div>
+                        <div className={`w-full border-b-2 ${activeTab === 'mapping' ? 'border-red-600' : 'border-transparent'} mt-1`}></div>
                     </div>
                     <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('addition')}>
-                        <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-blue-600 ${activeTab === 'addition' ? 'text-blue-600' : ''}`}>
+                        <h1 className={`font-semibold text-[20px] text-blue-600 hover:text-red-600 ${activeTab === 'addition' ? 'text-blue-600' : ''}`}>
                             Device Addition
                         </h1>
-                        <div className={`w-full border-b-2 ${activeTab === 'addition' ? 'border-blue-600' : 'border-transparent'} mt-1`}></div>
+                        <div className={`w-full border-b-2 ${activeTab === 'addition' ? 'border-red-600' : 'border-transparent'} mt-1`}></div>
                     </div>
                 </div>
                 <div className="pl-10 mb-6 mt-4">
-                    <input
-                        className="pl-2 h-9 w-64 border-[1px] rounded-md border-[#9C9C9C] bg-white outline-0"
-                        type="text"
-                        placeholder="🔍 Search"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                    />
+                    <div className="relative">
+                        <input
+                            className="pl-10 h-9 w-64 border-[1px] rounded-md border-[#9C9C9C] bg-white outline-0 bg-[url('/path/to/search-icon.png')] bg-no-repeat bg-[10px] bg-contain"
+                            type="text"
+                            placeholder="Search"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                        />
+                    </div>
                 </div>
                 {
                     activeTab === 'mapping' && (
@@ -147,10 +149,10 @@ const DevicePage = () => {
                                         <CreateCard placeholder="MAC Address" name="macid" value={newUsers.macid} onChange={handleChange} />
                                     </div>
                                     <div className="flex flex-row gap-2 pt-8 justify-end">
-                                        <Button className="bg-blue-600 text-blue-600 border-1 border-blue-600 cursor-pointer font-bold py-2 px-4 rounded" id="btn" onClick={handleClose}>
+                                        <Button className="bg-blue-600 text-white border-1 border-blue-600 cursor-pointer font-bold py-2 px-4 rounded" id="btn" onClick={handleClose}>
                                             CANCEL
                                         </Button>
-                                        <Button className="font-bold py-2 px-4 rounded border-1 border-blue-600 text-blue-600 bg-blue-600" id="btn" type="submit">
+                                        <Button className="font-bold py-2 px-4 rounded border-1 border-blue-600 text-white bg-blue-600" id="btn" type="submit">
                                             SAVE
                                         </Button>
                                     </div>

@@ -33,7 +33,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
       <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
         <div className="flex justify-between items-center">
           <h2 className="text-xl text-blue-600 font-bold">{mode === 'edit' ? 'EDIT USER DETAILS' : mode === 'delete' ? 'DELETE USER' : 'VIEW USER DETAILS'}</h2>
-          <button onClick={onClose} className="text-black bg-white cursor-pointer text-lg font-bold">X</button>
+          <button onClick={onClose} className="text-black bg-white cursor-pointer text-lg font-bold"> X </button>
         </div>
         <hr className="w-full my-4" />
         {mode === 'view' ? (

@@ -99,14 +99,15 @@ function ProfilePage() {
               <h1 className="pl-10 font-bold text-[32px] text-blue-600">PROFILE</h1>
             </div>
             <div className="pl-10 mb-6">
-              <input
-                className="pl-10 h-9 w-64 border border-gray-400 rounded-md bg-white outline-0 bg-[url('')] bg-no-repeat bg-[10px] bg-contain"
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-
+              <div className="relative">
+                <input
+                  className="pl-10 h-9 w-64 border border-gray-400 rounded-md bg-white outline-0 bg-[url('/path/to/Search.png')] bg-no-repeat bg-[10px] bg-contain"
+                  type="text"
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+              </div>
             </div>
             <Table
               columns={columns}
