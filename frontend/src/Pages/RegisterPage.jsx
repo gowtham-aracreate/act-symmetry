@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import axios from 'axios' 
-import Label from '../Components/Label'
-import Button from '../Components/Button'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import axios from 'axios';
+import Label from '../Components/Label';
+import Button from '../Components/Button';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ const RegisterPage = () => {
   const [isTouched, setIsTouched] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@$!#%*?&]{8}$/;
+
   const handlePasswordChange = (e) => {
     const password = e.target.value;
     setPass(password);
@@ -22,7 +23,7 @@ const RegisterPage = () => {
     } else {
       setError('');
     }
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +34,7 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/register", { name, email, pass });
+      const response = await axios.post("http://localhost:4000/create", { name, email, password: pass });
 
       console.log(response.data);  // Debugging: Check response from backend
 
@@ -44,8 +45,8 @@ const RegisterPage = () => {
       console.error("Error registering:", error);
       alert("Register failed. Please check your credentials.");
     }
-  }
-  
+  };
+
   return (
     <div>
       <div className="@container w-150 ">
@@ -107,7 +108,7 @@ const RegisterPage = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RegisterPage
+export default RegisterPage;

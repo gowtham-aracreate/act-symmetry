@@ -7,50 +7,43 @@ import CreateCard from "../Components/CreateCard";
 
 const DevicePage = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('mapping');
+  const [activeTab, setActiveTab] = useState('deviceAddition');
   const [searchTerm, setSearchTerm] = useState('');
-  const [newUsers, setNewUser] = useState({
+  const [newDevice, setNewDevice] = useState({
+      name:'',
       dname: '',
       dnum: '',
       macid: '',
+      status: 'Active'
     });
   const [data, setData] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:4000/newdevice')
+      .then(response => setData(response.data))
+      .catch(error => console.error('Error fetching data:', error));
+  }, []);
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
-  const handleChange = (e) => setNewUser({ ...newUsers, [e.target.name]: e.target.value });
+  const handleChange = (e) => setNewDevice({ ...newDevice, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-  
-    try {
-      const response = await axios.post("http://localhost:4000/newdevice", newUsers);
-  
-      if (response.status === 201) {
-        setNewUser({ dname: "", dnum: "", macid: "" });
+    console.log('Submitting new device:', newDevice);
+    axios.post('http://localhost:4000/newdevice', newDevice)
+      .then(response => {
+        console.log('Device created:', response.data);
+        setData([...data, response.data.device]); // Ensure the correct data is added
+        setNewDevice({ name: '', dname: '', dnum: '', macid: '', status: 'Active' });
         setIsOpen(false);
-  
-        // Fetch updated data to reflect new entry
-        fetchData();
-      }
-    } catch (error) {
-      console.error("Error creating user:", error);
-    }
+      })
+      .catch(error => {
+        console.error('Error creating device:', error);
+        alert('Error creating device');
+      });
   };
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/newdevice");
-      setData(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -61,24 +54,48 @@ const DevicePage = () => {
   };
 
   const handleEditDevice = (updatedDevice) => {
-    // Logic to handle editing a device
-    const updatedData = data.map((device) =>
-      device.id === updatedDevice.id ? updatedDevice : device
-    );
-    setData(updatedData);
+    axios.put(`http://localhost:4000/updateDevice/${updatedDevice.id}`, updatedDevice)
+      .then(response => {
+        const updatedData = data.map((device) =>
+          device.id === updatedDevice.id ? response.data : device
+        );
+        setData(updatedData);
+      })
+      .catch(error => {
+        console.error('Error updating device:', error);
+        alert('Error updating device');
+      });
   };
 
-  const handleDeleteDevice = (deviceId) => {
-    // Logic to handle deleting a device
-    const updatedData = data.filter((device) => device.id !== deviceId);
-    setData(updatedData);
+  const handleDeleteDevice = (device) => {
+    axios.delete(`http://localhost:4000/deleteDevice/${device.id}`)
+      .then(response => {
+        const updatedData = data.filter((item) => item.id !== device.id);
+        setData(updatedData);
+      })
+      .catch(error => {
+        console.error('Error deleting device:', error);
+        alert('Error deleting device');
+      });
   };
 
-  const filteredData = data.filter((device) =>
-    device.dname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    device.dnum.toString().includes(searchTerm.toLowerCase()) ||
-    device.macid.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = data.filter(device =>
+    (device.dname || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (device.dnum || '').toString().includes(searchTerm.toLowerCase()) ||
+    (device.macid || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const deviceAdditionColumns = [
+    { header: 'Device Name', accessor: 'dname' },
+    { header: 'Device Unique Number', accessor: 'dnum' },
+    { header: 'MAC ID', accessor: 'macid' },
+  ];
+
+  const deviceMappingColumns = [
+    { header: 'Username', accessor: 'name' },
+    { header: 'Added Device', accessor: 'mnum' },
+    { header: 'Status', accessor: 'status' },
+  ];
 
   return (
     <DashboardLayout>
@@ -86,23 +103,30 @@ const DevicePage = () => {
         <div className="flex w-full items-center pb-6">
           <h1 className="pl-10 font-semibold text-[32px] text-[#2899CB]">Device Management</h1>
           <div className="absolute right-9">
+          {activeTab === 'deviceAddition' && (
             <Button className="bg-[#2899CB] text-black border-[#2899CB] border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
               ADD DEVICE
             </Button>
+            )}
+            {activeTab === 'deviceMapping' && (
+            <Button className="bg-[#2899CB] text-black border-[#2899CB] border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
+              MAP DEVICE
+            </Button>
+            )}
           </div>
         </div>
         <div className="ml-10 mr-9 flex flex-row gap-14 border-b-2 border-gray-200 w-auto">
-          <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('mapping')}>
-            <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-[#2899CB] ${activeTab === 'mapping' ? 'text-[#2899CB]' : ''}`}>
-              Device Mapping
-            </h1>
-            <div className={`w-full border-b-2 ${activeTab === 'mapping' ? 'border-[#2899CB]' : 'border-transparent'} mt-1`}></div>
-          </div>
-          <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('addition')}>
-            <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-[#2899CB] ${activeTab === 'addition' ? 'text-[#2899CB]' : ''}`}>
+          <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('deviceAddition')}>
+            <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-[#2899CB] ${activeTab === 'deviceAddition' ? 'text-[#2899CB]' : ''}`}>
               Device Addition
             </h1>
-            <div className={`w-full border-b-2 ${activeTab === 'addition' ? 'border-[#2899CB]' : 'border-transparent'} mt-1`}></div>
+            <div className={`w-full border-b-2 ${activeTab === 'deviceAddition' ? 'border-[#2899CB]' : 'border-transparent'} mt-1`}></div>
+          </div>
+          <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('deviceMapping')}>
+            <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-[#2899CB] ${activeTab === 'deviceMapping' ? 'text-[#2899CB]' : ''}`}>
+              Device Mapping
+            </h1>
+            <div className={`w-full border-b-2 ${activeTab === 'deviceMapping' ? 'border-[#2899CB]' : 'border-transparent'} mt-1`}></div>
           </div>
         </div>
         <div className="pl-10 mb-6 mt-4">
@@ -114,38 +138,64 @@ const DevicePage = () => {
             onChange={handleSearchChange}
           />
         </div>
-        {activeTab === 'mapping' && (
+        {activeTab === 'deviceAddition' && (
           <Table
-            name="Device Name"
-            number="Device Unique Number"
-            status="MAC ID"
-            action="Actions"
+            columns={deviceAdditionColumns}
             data={filteredData}
             onEditUser={handleEditDevice}
             onDeleteUser={handleDeleteDevice}
+            showActions={false} // Only show the Eye icon
           />
         )}
-        {activeTab === 'addition' && (
+        {activeTab === 'deviceMapping' && (
           <Table
-            name="Username"
-            number="Added Device"
-            status="Status"
-            action="Actions"
+            columns={deviceMappingColumns}
             data={filteredData}
             onEditUser={handleEditDevice}
             onDeleteUser={handleDeleteDevice}
+            showActions={true} // Show all action buttons
           />
         )}
          {isOpen && (
             <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 bg-gray-800">
               <div className="bg-white p-6 rounded-lg shadow-lg">
-                <h2 className="text-xl text-[#2899CB] font-bold">ADD NEW DEVICE</h2>
+                <h2 className="text-xl text-[#2899CB] font-bold">{activeTab === 'deviceAddition' ? 'ADD NEW DEVICE' : 'MAP DEVICE'}</h2>
       
                 <form onSubmit={handleSubmit}>
                   <div className="flex flex-col gap-5 justify-center mt-5">
-                    <CreateCard placeholder="Device Name" name="dname" value={newUsers.dname} onChange={handleChange} />
-                    <CreateCard placeholder="Device Number" name="dnum" value={newUsers.dnum} onChange={handleChange} />
-                    <CreateCard placeholder="MAC Address" name="macid" value={newUsers.macid} onChange={handleChange} />
+                  {activeTab === 'deviceAddition' && (
+                    <CreateCard placeholder="Device Name" name="dname" value={newDevice.dname} onChange={handleChange} />
+                  )}
+                    {activeTab === 'deviceAddition' && (
+                    <CreateCard placeholder="Device Number" name="dnum" value={newDevice.dnum} onChange={handleChange} />
+                    )}
+                    {activeTab === 'deviceAddition' && (
+                      <CreateCard placeholder="MAC Address" name="macid" value={newDevice.macid} onChange={handleChange} />
+                    )}
+                    {activeTab === 'deviceMapping' && (
+                      <CreateCard placeholder="Username" name="name" value={newDevice.name} onChange={handleChange} />
+                    )}
+                    {activeTab === 'deviceMapping' && (
+                      <CreateCard placeholder="Device Mapping" name="dmap"  onChange={handleChange} />
+                    )}
+                    {activeTab === 'deviceMapping' && (
+                    <div className="flex flex-row gap-6 pt-[5px]">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Active"
+                        checked={newDevice.status === 'Active'}
+                        onChange={handleChange}
+                      /> Active
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Inactive"
+                        checked={newDevice.status === 'Inactive'}
+                        onChange={handleChange}
+                      /> Inactive
+                    </div>
+                    )}
                   </div>
                   <div className="flex flex-row gap-2 pt-8 justify-end">
                     <Button className="bg-[#2899CB] text-[#2899CB] border-1 border-[#2899CB] cursor-pointer font-bold py-2 px-4 rounded" id="btn" onClick={handleClose}>

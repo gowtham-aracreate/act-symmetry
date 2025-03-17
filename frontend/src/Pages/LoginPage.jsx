@@ -22,8 +22,10 @@ const Login = () => {
       const res = await axios.post('http://localhost:4000/login', UserDetail);
       if (res.data.redirectUrl) {
         navigate(res.data.redirectUrl);
+        alert('Login successful');
       } else {
         console.log('Login successful, but no redirect URL provided');
+        
       }
       console.log(res.data);
     } catch (error) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+
 const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModalMode }) => {
   const [formData, setFormData] = useState({ name: '', email: '', address: '', status: '' });
 
@@ -70,6 +71,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
               <button onClick={onClose} className="bg-[#2899CB] text-white font-bold py-2 px-4 rounded cursor-pointer">Cancel</button>
             </div>
           </div>
+          
         ) : (
           <form onSubmit={handleSubmit} className="space-y-2 mt-5 gap-3">
             <div className="flex flex-col">
