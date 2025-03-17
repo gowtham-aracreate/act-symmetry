@@ -12,7 +12,7 @@ function DashboardPage() {
   const navigate =useNavigate()
     return (
       <DashboardLayout>
-        <h1 className="w-[171px] h-[40px] ml-[44px] font-bold text-[32px] text-black ">DASHBOARD</h1>
+        <h1 className="w-[171px] h-[40px] ml-[44px] font-bold text-[32px] text-blue-600 ">DASHBOARD</h1>
         <div className="md:grid md:grid-cols-3 sm:grid sm:grid-cols-2">
        <Card 
        name="Profile"

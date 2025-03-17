@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from '../Components/Button';
 import CreateCard from '../Components/CreateCard';
-import DashboardLayout from '../Layouts/dashboardLayout';
+import DashboardLayout from '../Layouts/DashboardLayout';
 import Table from '../Components/Table';
 import './login.css';
 
@@ -88,15 +88,15 @@ function ProfilePage() {
   return (
     <DashboardLayout>
       <div className="flex">
-        <div className="w-full p-6">
+        <div className="w-full ">
           <div>
             <div className="flex relative w-full items-center pb-6">
               <div className="absolute right-10">
-                <div role='button' className="bg-black text-white hover:bg-blue-600 cursor-pointer font-bold py-2 px-4 rounded " onClick={handleOpen}>
+                <div role='button' className="bg-blue-600 text-white hover:bg-black cursor-pointer font-bold py-2 px-4 rounded " onClick={handleOpen}>
                   CREATE
                 </div>
               </div>
-              <h1 className="pl-10 font-bold text-[32px] text-black">PROFILE</h1>
+              <h1 className="pl-10 font-bold text-[32px] text-blue-600">PROFILE</h1>
             </div>
             <div className="pl-10 mb-6">
               <div className="relative">
@@ -154,10 +154,10 @@ function ProfilePage() {
                       /> Block
                     </div>
                     <div className="flex flex-row gap-2 pt-8 justify-end">
-                      <div role='button' className="bg-black text-white cursor-pointer hover:bg-blue-600 font-bold py-2 px-4 rounded " id="btn" onClick={handleClose}>
+                      <div role='button' className="bg-blue-600 text-white cursor-pointer hover:bg-black font-bold py-2 px-4 rounded " id="btn" onClick={handleClose}>
                         Cancel
                       </div>
-                      <Button className="font-bold py-2 px-4 rounded bg-black text-white" id="btn" type="submit">
+                      <Button className="bg-blue-600 text-white cursor-pointer hover:bg-black font-bold py-2 px-4 rounded" id="btn" type="submit">
                         Create
                       </Button>
                     </div>

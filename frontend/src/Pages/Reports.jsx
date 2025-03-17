@@ -4,6 +4,8 @@ import DashboardLayout from "../Layouts/DashboardLayout";
 import Button from '../Components/Button';
 import Table from "../Components/Table";
 import CreateCard from "../Components/CreateCard";
+import download_white from '../assets/images/download_white.png';
+import email_white from '../assets/images/email_white.png';
 
 const DevicePage = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -84,23 +86,28 @@ const DevicePage = () => {
         <DashboardLayout>
             <div className="overflow-x-auto">
                 <div className="flex w-full items-center pb-6">
-                    <h1 className="pl-10 font-semibold text-[32px] text-blue-600">DEVICE MANAGEMENT</h1>
-                    <div className="absolute right-9">
-                        <Button className="bg-black text-white border-blue-600 border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
-                            ADD DEVICE
+                    <h1 className="pl-10 font-semibold text-[32px] text-blue-600">REPORTS</h1>
+                    <div className="absolute right-9 flex flex-row gap-4">
+                        <Button className="bg-black text-white border-blue-600 border-[1px] font-bold py-2 px-4 rounded flex items-center" onClick={handleOpen}>
+                            <img src={download_white} alt="Download" className="w-[18.67px] h-[18.67px] mr-2" />
+                            Download Report
+                        </Button>
+                        <Button className="bg-blue-600 text-white border-blue-600 border-[1px] font-bold py-2 px-4 rounded flex items-center " onClick={handleOpen}>
+                            <img src={email_white} alt="email_white" className="w-[18.67px] h-[18.67px] mr-2" />
+                            Send To Email
                         </Button>
                     </div>
                 </div>
                 <div className="ml-10 mr-9 flex flex-row gap-14 border-b-2 border-gray-200 w-auto">
                     <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('mapping')}>
                         <h1 className={`font-semibold text-[20px] text-blue-600 hover:text-black ${activeTab === 'mapping' ? 'telue-600' : ''}`}>
-                            Device Mapping
+                            Consumption
                         </h1>
                         <div className={`w-full border-b-2 ${activeTab === 'mapping' ? 'border-black' : 'border-transparent'} mt-1`}></div>
                     </div>
                     <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('addition')}>
                         <h1 className={`font-semibold text-[20px]  text-blue-600 hover:text-black ${activeTab === 'addition' ? 'text-black' : ''}`}>
-                            Device Addition
+                            Wastage
                         </h1>
                         <div className={`w-full border-b-2 ${activeTab === 'addition' ? 'border-black' : 'border-transparent'} mt-1`}></div>
                     </div>
@@ -119,7 +126,7 @@ const DevicePage = () => {
                 {
                     activeTab === 'mapping' && (
                         <Table
-                            columns={["Device Name", "Device Unique Number", "MAC ID"]}
+                            columns={["Username", "Status", "Device Name", "Date", "Units", "Consumption", "Wastage"]}
                             data={filteredData}
                             onEditUser={handleEditDevice}
                             onDeleteUser={handleDeleteDevice}
@@ -129,7 +136,7 @@ const DevicePage = () => {
                 {
                     activeTab === 'addition' && (
                         <Table
-                            columns={["Username", "Added Device", "Status"]}
+                            columns={["Username", "Status", "Device Name", "Date", "Units", "Consumption", "Wastage"]}
                             data={filteredData}
                             onEditUser={handleEditDevice}
                             onDeleteUser={handleDeleteDevice}

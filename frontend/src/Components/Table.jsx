@@ -86,7 +86,7 @@ const Table = ({ data, onEditUser, onDeleteUser, columns }) => {
       <div className="overflow-x-auto rounded-lg">
         <table className="w-full table-fixed">
           <thead>
-            <tr className="bg-black text-white">
+            <tr className="bg-blue-600 text-white">
               <th className="p-3 text-center" style={{ width: `calc(${columnWidth} / 2)` }}>S.No</th>
               {columns.map((column, index) => (
                 <th key={index} className="p-3 text-center" style={{ width: columnWidth }}>

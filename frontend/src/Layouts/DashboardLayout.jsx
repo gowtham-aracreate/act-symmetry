@@ -25,7 +25,7 @@ const DashboardLayout = ({ children }) => {
 
      return (
           <div className='md:h-screen bg-gray-100 flex'>
-               <header className='fixed top-0 left-0 w-full h-[65px] bg-white  flex items-center justify-between px-6'>
+               <header className='fixed top-0 left-0 w-full h-[65px] bg-white flex items-center justify-between px-6 '>
                     <img className='w-[60px] h-[40px]' src={admin_logo} alt="Admin Logo" />
                     <div className='flex items-center space-x-4'>
                          <img className='w-[25px] h-[25px] cursor-pointer' src={notification_head} alt="Notifications" />
@@ -35,7 +35,7 @@ const DashboardLayout = ({ children }) => {
 
                <aside className="w-[296px] bg-white flex flex-col gap-4 h-screen pt-[80px] pl-[10px]">
                     <div 
-                         className={`flex items-center ${isActive('/dashboard') ? 'bg-black text-white' : 'hover:bg-black text-black hover:text-white '} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
+                         className={`flex items-center ${isActive('/dashboard') ? 'bg-blue-600 text-white' : 'hover:bg-black text-black hover:text-white '} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
                          onClick={() => { navigate('/dashboard') }}
                          onMouseEnter={() => setHoveredItem('dashboard')}
                          onMouseLeave={() => setHoveredItem(null)}
@@ -44,7 +44,7 @@ const DashboardLayout = ({ children }) => {
                          <h1 className="ml-[10px]">Dashboard</h1>
                     </div>
                     <div 
-                         className={`flex items-center ${isActive('/profile') ? 'bg-black text-white' : 'hover:bg-black text-black hover:text-white'} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
+                         className={`flex items-center ${isActive('/profile') ? 'bg-blue-600 text-white' : 'hover:bg-black text-black hover:text-white'} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
                          onClick={() => navigate("/profile")}
                          onMouseEnter={() => setHoveredItem('profile')}
                          onMouseLeave={() => setHoveredItem(null)}
@@ -53,7 +53,7 @@ const DashboardLayout = ({ children }) => {
                          <h1 className="ml-[10px]">Profile</h1>
                     </div>
                     <div 
-                         className={`flex items-center ${isActive('/device-management') ? 'bg-black text-white' : 'hover:bg-black text-black hover:text-white'} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
+                         className={`flex items-center ${isActive('/device-management') ? 'bg-blue-600 text-white' : 'hover:bg-black text-black hover:text-white'} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
                          onClick={() => navigate('/device-management')}
                          onMouseEnter={() => setHoveredItem('device-management')}
                          onMouseLeave={() => setHoveredItem(null)}
@@ -62,7 +62,7 @@ const DashboardLayout = ({ children }) => {
                          <h1 className="ml-[10px]">Device Management</h1>
                     </div>
                     <div 
-                         className={`flex items-center ${isActive('/reports') ? 'bg-black text-white' : 'hover:bg-black text-black hover:text-white'} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
+                         className={`flex items-center ${isActive('/reports') ? 'bg-blue-600 text-white' : 'hover:bg-black text-black hover:text-white'} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
                          onClick={() => navigate('/reports')}
                          onMouseEnter={() => setHoveredItem('reports')}
                          onMouseLeave={() => setHoveredItem(null)}
@@ -71,7 +71,7 @@ const DashboardLayout = ({ children }) => {
                          <h1 className="ml-[10px]">Reports</h1>
                     </div>
                     <div 
-                         className={`flex items-center ${isActive('/set-user-limits') ? 'bg-black text-white' : 'hover:bg-black text-black hover:text-white'} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
+                         className={`flex items-center ${isActive('/set-user-limits') ? 'bg-blue-600 text-white' : 'hover:bg-black text-black hover:text-white'} w-[220px] h-[44px] rounded-xl cursor-pointer transition-transform transform hover:scale-105`} 
                          onClick={() => navigate('/set-user-limits')}
                          onMouseEnter={() => setHoveredItem('set-user-limits')}
                          onMouseLeave={() => setHoveredItem(null)}
