@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
-body{
+body {
     font-family: "inter", sans-serif;
 }
 
 
-#button{
-    background-color: rgba(40, 153, 203, 1);
+#button {
+    background-color: black;
     cursor: pointer;
     width: 270px;
     height: 48px;
@@ -14,16 +14,16 @@ body{
     color: white;
     align-items: center;
     justify-content: center;
-    
+
 
 }
 
-#eye-btn{
+#eye-btn {
     border: none;
     background-color: transparent;
     border: white;
 }
-#eye-btn:focus{
+
+#eye-btn:focus {
     outline: none;
 }
-  
