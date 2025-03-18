@@ -35,8 +35,8 @@ const Login = () => {
   };
 
   return (
-    <div className="@container w-150  ">
-      <div className="bg-white mt-[135px] mr-[132px] ml-[130px]">
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className="flex justify-center mb-4">
           <img src={admin_logo} alt="Admin Logo" className="h-16 w-18" />
         </div>
@@ -81,13 +81,13 @@ const Login = () => {
             </Label>
           </div>
 
-          <div className="flex items-center justify-between mb-6 ml-50">
+          <div className="flex items-center justify-between mb-6 ml-60">
             <a href="#" onClick={() => navigate('/forget-password')} className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800">
               Forgot Password?
             </a>
           </div>
 
-          <Button id="button" type="submit" className="flex items-center justify-center ml-7">
+          <Button id="button" type="submit" className="flex items-center justify-center ml-14">
             Log In
           </Button>
         </form>

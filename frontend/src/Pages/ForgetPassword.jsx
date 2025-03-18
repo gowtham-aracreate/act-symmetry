@@ -45,8 +45,8 @@ const ForgetPassword = () => {
     }
   };
   return (
-    <div className="@container w-154">
-      <div className="mt-[195px] mr-[132px] ml-[130px]">
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <form>
           <div className='mb-4'>
             <h2 className="font-bold text-2xl mb-4 text-center">Forget your Password?</h2>
