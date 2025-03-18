@@ -1,5 +1,5 @@
 import React from "react";
-import DashboardLayout from "../Layouts/dashboardLayout";
+import DashboardLayout from "../Layouts/DashboardLayout";
 import Card from "../Components/card";
 import profile_black from "../assets/images/profile_black.png";
 import device_black from "../assets/images/device_black.png";
@@ -12,7 +12,7 @@ function DashboardPage() {
   const navigate =useNavigate()
     return (
       <DashboardLayout>
-        <h1 className="w-[171px] h-[40px] ml-[44px] font-bold text-[32px] text-[#2899CB] ">DASHBOARD</h1>
+        <h1 className="w-[171px] h-[40px] ml-[44px] font-bold text-[32px] text-blue-600 ">DASHBOARD</h1>
         <div className="md:grid md:grid-cols-3 sm:grid sm:grid-cols-2">
        <Card 
        name="Profile"

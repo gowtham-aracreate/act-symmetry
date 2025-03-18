@@ -9,7 +9,6 @@ const port = 4000;
 
 app.use(cors());
 app.use(express.json());
-// app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 mongoose.connect('mongodb://localhost:27017/Users')
     .then(() => console.log("MongoDB connection successful"))
@@ -38,7 +37,7 @@ const CreatedUsers = mongoose.model("createdUsers", createdUserSchema);
 
 const deviceSchema = new mongoose.Schema({
     dname: String,
-    dnum: { type: String, unique: true },
+    dnum: String, // Removed unique constraint
     macid: String
 });
 
@@ -81,18 +80,6 @@ app.post('/createExtended', async (req, res) => {
     }
 });
 
-app.post('/newdevice', async (req, res) => {
-    try {
-        const { dname, dnum, macid } = req.body;
-        const newDevice = new Devices({ dname, dnum, macid });
-        await newDevice.save();
-        res.status(201).json(newDevice);
-    } catch (error) {
-        console.error('Error saving device', error);
-        res.status(500).json({ error: "Error saving device" });
-    }
-});
-
 app.get('/newdevice', async (req, res) => {
     try {
         const devices = await Devices.find();
@@ -100,6 +87,33 @@ app.get('/newdevice', async (req, res) => {
     } catch (error) {
         console.error('Error fetching devices', error);
         res.status(500).send('Error fetching devices');
+    }
+});
+
+// ✅ FIXED DEVICE CREATION
+app.post('/newdevice', async (req, res) => {
+    const { dname, dnum, macid } = req.body;
+
+    // Input validation
+    if (!dname || !dnum || !macid) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    try {
+        const newDevice = new Devices({ dname, dnum, macid });
+        await newDevice.save();
+        res.status(201).json(newDevice);
+    } catch (error) {
+        if (error.code === 11000) {
+            // MongoDB duplicate key error
+            return res.status(400).json({ error: 'Device with this dnum already exists' });
+        }
+        console.error('Error saving device:', {
+            message: error.message,
+            stack: error.stack,
+            data: req.body,
+        });
+        res.status(500).json({ error: 'Error saving device' });
     }
 });
 
@@ -122,7 +136,6 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         console.error('Error logging in user', error);
         res.status(500).send('Error logging in user');
-        res.status(404).json({ message: 'Login failed' });
     }
 });
 
@@ -177,10 +190,6 @@ app.delete('/deleteUser/:email', async (req, res) => {
         res.status(500).send('Error deleting user');
     }
 });
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
-// });
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

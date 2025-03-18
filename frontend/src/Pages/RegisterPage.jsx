@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios' 
 import Label from '../Components/Label'
 import Button from '../Components/Button'
+import { Eye, EyeOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'
 
 const RegisterPage = () => {
@@ -12,13 +13,14 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
   const [isTouched, setIsTouched] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@$!#%*?&]{8}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@$!#%*?&]$/;
+
   const handlePasswordChange = (e) => {
     const password = e.target.value;
     setPass(password);
 
     if (!passwordRegex.test(password)) {
-      setError("Password must contain 1 uppercase, 1 lowercase, 1 digit, 1 special character, and be exactly 8 characters long.");
+      setError("Password must contain 1 uppercase, 1 lowercase, 1 digit and 1 special character.");
     } else {
       setError('');
     }
@@ -28,12 +30,12 @@ const RegisterPage = () => {
     e.preventDefault();
 
     if (!passwordRegex.test(pass)) {
-      setError("Password must contain 1 uppercase, 1 lowercase, 1 digit, 1 special character, and be exactly 8 characters long.");
+      setError("Password must contain 1 uppercase, 1 lowercase, 1 digit and 1 special character.");
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/register", { name, email, pass });
+      const response = await axios.post("http://localhost:4000/create", { name, email, password: pass });
 
       console.log(response.data);  // Debugging: Check response from backend
 
@@ -62,6 +64,7 @@ const RegisterPage = () => {
                   onChange={(e) => setName(e.target.value)} 
                   placeholder="Please enter your Name" 
                   className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100" 
+                  autoComplete="name"
                 />
               </div>
               <div className='flex flex-col'>
@@ -77,10 +80,12 @@ const RegisterPage = () => {
                   onChange={(e) => setEmail(e.target.value)} 
                   placeholder="Please enter your Email" 
                   className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100" 
+                  autoComplete="email"
                 />
               </div>
               <div className='flex flex-col'>
-                <Label htmlFor="password" text="Password" className="block text-gray-700 text-sm font-bold mb-2" />
+                <Label htmlFor="pass" text="Password" className="block text-gray-700 text-sm font-bold mb-2" />
+                <div className='flex relative'>
                 <input 
                   name="pass"
                   type={showPassword ? "text" : "password"}
@@ -89,15 +94,22 @@ const RegisterPage = () => {
                   value={pass}
                   onChange={handlePasswordChange}
                   onBlur={() => setIsTouched(true)}
-                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100" 
+                  className=" shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100" 
+                  autoComplete="new-password"
                 />
-                <input 
-                  type="checkbox" 
-                  checked={showPassword} 
-                  onChange={() => setShowPassword(!showPassword)} 
-                  className=''
-                />
+               <Button
+                id="eye-btn"
+                type="button"
+                className="absolute right-0 pr-3 pt-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowPassword(!showPassword);
+                }}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </Button>
               </div>
+                </div>
               {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
               <div className='pt-4 ml-6'>
                 <Button  id="button" type="submit">Register</Button>

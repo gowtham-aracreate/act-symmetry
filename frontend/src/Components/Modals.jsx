@@ -29,13 +29,11 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 bg-gray-800">
+    <div className="fixed inset-0 flex items-center justify-center ">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl text-[#2899CB] font-bold">
-            {mode === 'edit' ? 'EDIT USER DETAILS' : mode === 'delete' ? 'DELETE USER' : 'VIEW USER DETAILS'}
-          </h2>
-          <button onClick={onClose} className="text-black bg-white cursor-pointer text-lg font-bold">X</button>
+          <h2 className="text-xl text-blue-400 font-bold">{mode === 'edit' ? 'EDIT USER DETAILS' : mode === 'delete' ? 'DELETE USER' : 'VIEW USER DETAILS'}</h2>
+          <button onClick={onClose} className="text-black bg-white cursor-pointer text-lg font-bold"> X </button>
         </div>
         <hr className="w-full my-4" />
         {mode === 'view' ? (
@@ -57,9 +55,9 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
               <p className={`ml-22 ${user.status === 'Active' ? 'text-green-500' : user.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{user.status}</p>
             </div>
             <div className="flex justify-end mt-4 space-x-2">
-              <button onClick={() => setFormData(user) || setModalMode('edit')} className="bg-[#2899CB] text-white font-bold py-2 px-4 rounded cursor-pointer">Edit</button>
+              <button onClick={() => setFormData(user) || setModalMode('edit')} className="bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">Edit</button>
               <button onClick={() => setModalMode('delete')} className="bg-red-500 text-white font-bold py-2 px-4 rounded cursor-pointer">Delete</button>
-              <button onClick={onClose} className="bg-[#2899CB] text-white font-bold py-2 px-4 rounded cursor-pointer">Close</button>
+              <button onClick={onClose} className="bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">Close</button>
             </div>
           </div>
         ) : mode === 'delete' ? (
@@ -67,7 +65,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
             <p>Are you sure you want to delete this user?</p>
             <div className="flex justify-end mt-4 space-x-2">
               <button onClick={() => onDelete(user)} className="bg-red-500 text-white font-bold py-2 px-4 rounded cursor-pointer">Confirm</button>
-              <button onClick={onClose} className="bg-[#2899CB] text-white font-bold py-2 px-4 rounded cursor-pointer">Cancel</button>
+              <button onClick={onClose} className="bg-blue-400 text-white font-bold py-2 px-4 rounded cursor-pointer">Cancel</button>
             </div>
           </div>
         ) : (
@@ -138,7 +136,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
               </div>
             </div>
             <div className="flex justify-end mt-4">
-              <button type="submit" className="bg-[#2899CB] text-white font-bold py-2 px-4 rounded cursor-pointer">Save</button>
+              <button type="submit" className="bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">Save</button>
             </div>
           </form>
         )}
