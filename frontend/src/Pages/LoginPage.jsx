@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Label from '../Components/Label';
 import Button from '../Components/Button';
+import admin_logo from '../assets/images/admin_logo.png';
 import { Eye, EyeOff } from 'lucide-react';
 import './login.css';
 
@@ -33,8 +34,11 @@ const Login = () => {
   };
 
   return (
-    <div className="@container w-150">
-      <div className="bg-white mt-[195px] mr-[132px] ml-[130px]">
+    <div className="@container w-150  ">
+      <div className="bg-white mt-[135px] mr-[132px] ml-[130px]">
+        <div className="flex justify-center mb-4">
+          <img src={admin_logo} alt="Admin Logo" className="h-16 w-18" />
+        </div>
         <h1 className="font-bold text-2xl mb-4 text-center">Welcome back</h1>
         <p className="text-gray-600 mb-6 text-center">Please provide user credentials to login</p>
 
