@@ -44,6 +44,15 @@ const newDeviceSchema = new mongoose.Schema({
 
 const NewDeviceUsers = mongoose.model("newdevice", newDeviceSchema);
 
+const deviceMappingSchema = new mongoose.Schema({
+    name: String,
+    mname:  { type: String, required: true },
+    mnum: { type: Number, required: true },
+    status: { type: String, required: true }
+});
+
+const DeviceMapping = mongoose.model("deviceMapping", deviceMappingSchema);
+
 const otpSchema = new mongoose.Schema({
     email: { type: String, required: true },
     otp: { type: String, required: true },
@@ -53,7 +62,7 @@ const otpSchema = new mongoose.Schema({
 const OTP = mongoose.model("otp", otpSchema);
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+ service: "gmail",
     auth: {
       user: process.env.EMAIL_USER, // Your Gmail ID
       pass: process.env.EMAIL_PASS, // Your Gmail App Password
@@ -117,6 +126,26 @@ app.get('/newdevice', async (req, res) => {
     }
 });
 
+app.post('/deviceMapping', async(req, res) => {
+    try {
+        const { mname, mnum,status } = req.body;
+        const newMapping = new DeviceMapping({ mname, mnum,status });
+        await newMapping.save();
+        res.status(201).json({ message: "Device mapping added successfully!", mapping: newMapping });
+      } catch (error) {
+        res.status(500).json({ error: "Error saving device mapping" });
+      }
+});
+
+app.get('/deviceMapping', async (req, res) => {
+    try {
+        const mappings = await DeviceMapping.find();
+        res.json(mappings);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching device mappings" });
+    }
+});
+
 app.put('/updateDevice/:id', async (req, res) => {
     const { id } = req.params;
     const { dname, dnum, macid, status } = req.body;
@@ -161,7 +190,7 @@ app.post("/verify-otp", async (req, res) => {
     const { email, otp } = req.body;
     const otpRecord = await OTP.findOne({ email, otp });
   
-    if (!otpRecord) return res.status(400).json({ message: "Invalid OTP" });
+    if (!otpRecord) return res(400).json({ message: "Invalid OTP" });
     if (otpRecord.expiresAt < Date.now()) {
         return res.status(400).json({ message: "OTP expired" });
     }

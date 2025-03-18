@@ -124,6 +124,7 @@ function ProfilePage() {
               onEditUser={handleEditUser}
               onDeleteUser={handleDeleteUser}
               getStatusColor={getStatusColor}
+              viewMode="profile" // Pass the viewMode prop
             />
           </div>
           {isOpen && (
