@@ -104,6 +104,7 @@ app.post('/newdevice', async (req, res) => {
         await newDevice.save();
         res.status(201).json({ message: "Device added successfully!", device: newDevice });
     } catch (error) {
+        console.error("Error saving device:", error);
         res.status(500).json({ error: "Error saving device" });
     }
 });
@@ -130,6 +131,33 @@ app.put('/updateDevice/:id', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: "Error updating device" });
     }
+});
+
+app.put('/updateDevice/:id', async (req, res) => {
+  const { id } = req.params;
+  const { dname, dnum, macid } = req.body;
+  try {
+    const updatedDevice = await NewDeviceUsers.findByIdAndUpdate(
+      id,
+      { dname, dnum, macid },
+      { new: true }
+    );
+    res.json(updatedDevice);
+  } catch (error) {
+    console.error("Error updating device:", error);
+    res.status(500).send("Error updating device");
+  }
+});
+
+app.delete('/deleteDevice/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await NewDeviceUsers.findByIdAndDelete(id);
+    res.sendStatus(204);
+  } catch (error) {
+    console.error("Error deleting device:", error);
+    res.status(500).send("Error deleting device");
+  }
 });
 
 app.post("/forgot-password", async (req, res) => {

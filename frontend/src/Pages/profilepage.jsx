@@ -21,9 +21,13 @@ function ProfilePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [data, setData] = useState([]);
 
+  // Fetch data from the backend
   useEffect(() => {
     axios.get('http://localhost:4000/createdUsers')
-      .then(response => { setData(response.data); console.log(response.data); })
+      .then(response => {
+        setData(response.data); 
+        console.log(response.data);
+      })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
@@ -32,6 +36,7 @@ function ProfilePage() {
   const handleChange = (e) => setNewUser({ ...newUser, [e.target.name]: e.target.value });
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
+  // Function to get the color for the status
   const getStatusColor = (status) => {
     switch (status) {
       case 'Active':
@@ -77,12 +82,14 @@ function ProfilePage() {
       .catch(error => console.error('Error deleting user:', error));
   };
 
+  // Filter data based on the search term
   const filteredData = data.filter(row =>
     row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     row.address.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Define table columns
   const columns = ["Name", "Email", "Address", "Status"];
 
   return (
@@ -110,11 +117,30 @@ function ProfilePage() {
               </div>
             </div>
             <Table
-              columns={columns}
-              data={filteredData}
-              onEditUser={handleEditUser}
-              onDeleteUser={handleDeleteUser}
-              getStatusColor={getStatusColor}
+              columns={["Name", "Email", "Address", "Status"]}
+              data={filteredData.map((user) => ({
+                name: user.name,
+                email: user.email,
+                address: user.address,
+                status: user.status,
+              }))}
+              renderRow={(user, columns) => (
+                columns.map((column, colIndex) => (
+                  <td key={colIndex} className="p-3 text-center">
+                    {column === "Name" && user.name}
+                    {column === "Email" && user.email}
+                    {column === "Address" && user.address}
+                    {column === "Status" && (
+                      <span className={getStatusColor(user.status)}>
+                        {user.status || "N/A"}
+                      </span>
+                    )}
+                  </td>
+                ))
+              )}
+              onEditUser={(user) => handleEditUser(user)}
+              onDeleteUser={(user) => handleDeleteUser(user)}
+              showEditDeleteActions={true}
             />
           </div>
           {isOpen && (

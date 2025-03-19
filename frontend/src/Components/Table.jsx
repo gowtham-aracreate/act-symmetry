@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Eye, Edit, Trash } from "lucide-react";
 import Modal from './Modals';
 
-const Table = ({ data, onEditUser, onDeleteUser, columns, showDeviceColumns }) => {
+const Table = ({ data, onViewDetails, onEditUser, onDeleteUser, columns, showDeviceColumns, showEditDeleteActions = true, renderRow }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -30,30 +30,21 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showDeviceColumns }) =
     setSelectedUser(user);
     setModalMode('view');
     setIsModalOpen(true);
+    onViewDetails(user);
   };
 
   const handleEditUser = (user) => {
     setSelectedUser(user);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
-
-  const handleSaveUser = (updatedUser) => {
-    onEditUser(updatedUser);
-    setIsModalOpen(false);
-    setSelectedUser(null);
+    onEditUser(user);
   };
 
   const handleDeleteUser = (user) => {
     setSelectedUser(user);
     setModalMode('delete');
     setIsModalOpen(true);
-  };
-
-  const handleConfirmDeleteUser = (user) => {
     onDeleteUser(user);
-    setIsModalOpen(false);
-    setSelectedUser(null);
   };
 
   const handleCloseModal = () => {
@@ -61,28 +52,15 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showDeviceColumns }) =
     setSelectedUser(null);
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Active':
-        return 'text-green-500';
-      case 'Inactive':
-        return 'text-orange-500';
-      case 'Block':
-        return 'text-red-500';
-      default:
-        return '';
-    }
-  };
-
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const columnWidth = `${100 / (columns.length + 1.5)}%`; 
+  const columnWidth = `${100 / (columns.length + 1.5)}%`;
 
   return (
-    <div className="pr-10 pl-10 pt-6 ">
+    <div className="pr-10 pl-10 pt-6">
       <div className="overflow-x-auto rounded-lg">
         <table className="w-full table-fixed">
           <thead>
@@ -93,31 +71,45 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showDeviceColumns }) =
                   {column}
                 </th>
               ))}
-              <th className="p-3 text-center" style={{ width: columnWidth}}>Actions</th>
+              <th className="p-3 text-center" style={{ width: columnWidth }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {currentData.map((item, index) => (
-              <tr key={index} className="border-b border-gray-300 ">
+              <tr key={index} className="border-b border-gray-300">
                 <td className="p-3 text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                {showDeviceColumns ? (
-                  <>
-                    <td className="p-3 text-center">{item.dname}</td>
-                    <td className="p-3 text-center">{item.dnum}</td>
-                    <td className="p-3 text-center">{item.macid}</td>
-                  </>
-                ) : (
-                  <>
-                    <td className="p-3 text-center">{item.name}</td>
-                    <td className="p-3 text-center">{item.email}</td>
-                    <td className="p-3 text-center">{item.address}</td>
-                    <td className={`p-3 text-center ${getStatusColor(item.status)}`}>{item.status}</td>
-                  </>
-                )}
+                {renderRow
+                  ? renderRow(item, columns) // Use the custom renderRow function if provided
+                  : columns.map((column, colIndex) => (
+                      <td key={colIndex} className="p-3 text-center">
+                        {item[column.toLowerCase().replace(/\s+/g, '').replace('device', '')] || "N/A"}
+                      </td>
+                    ))}
                 <td className="p-3 text-center flex justify-center items-center space-x-2">
-                  <button className="text-gray-500 hover:text-blue-800 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
-                  <button className="text-gray-500 hover:text-blue-800 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
-                  <button className="text-gray-500 hover:text-red-600 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
+                  {/* View Action */}
+                  <button
+                    className="text-gray-500 hover:text-blue-800 cursor-pointer"
+                    onClick={() => handleViewDetails(item)}
+                  >
+                    <Eye size={16} />
+                  </button>
+                  {/* Conditionally Render Edit and Delete Actions */}
+                  {showEditDeleteActions && (
+                    <>
+                      <button
+                        className="text-gray-500 hover:text-blue-800 cursor-pointer"
+                        onClick={() => handleEditUser(item)}
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button
+                        className="text-gray-500 hover:text-red-600 cursor-pointer"
+                        onClick={() => handleDeleteUser(item)}
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
@@ -125,29 +117,42 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showDeviceColumns }) =
         </table>
       </div>
       <div className="flex justify-end items-center mt-4">
-        <button onClick={handlePrevious} className="px-3 py-1 border-[1px] border-gray-300 rounded cursor-pointer" disabled={currentPage === 1}>&lt;</button>
+        <button
+          onClick={handlePrevious}
+          className="px-3 py-1 border-[1px] border-gray-300 rounded cursor-pointer"
+          disabled={currentPage === 1}
+        >
+          &lt;
+        </button>
         <div className="flex space-x-1 ml-2 cursor-pointer">
           {[...Array(totalPages)].map((_, index) => (
             <button
               key={index + 1}
               onClick={() => handleClick(index + 1)}
-              className={`px-3 py-1 gap-0 border-[1px] border-gray-300 rounded cursor-pointer ${currentPage === index + 1 ? 'bg-black text-white' : ''}`}
+              className={`px-3 py-1 gap-0 border-[1px] border-gray-300 rounded cursor-pointer ${
+                currentPage === index + 1 ? 'bg-black text-white' : ''
+              }`}
             >
               {index + 1}
             </button>
           ))}
         </div>
-        <button onClick={handleNext} className="px-3 py-1 border-[1px] border-gray-300 rounded ml-2 cursor-pointer disabled:opacity-50" disabled={currentPage === totalPages}>&gt;</button>
+        <button
+          onClick={handleNext}
+          className="px-3 py-1 border-[1px] border-gray-300 rounded ml-2 cursor-pointer disabled:opacity-50"
+          disabled={currentPage === totalPages}
+        >
+          &gt;
+        </button>
       </div>
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         user={selectedUser}
         mode={modalMode}
-        onSave={handleSaveUser}
-        onEdit={handleSaveUser}
-        onDelete={handleConfirmDeleteUser} 
-        setModalMode={setModalMode} 
+        onSave={onEditUser}
+        onDelete={onDeleteUser}
+        setModalMode={setModalMode}
       />
     </div>
   );
