@@ -17,6 +17,24 @@ const DevicePage = () => {
   });
   const [data, setData] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(null); // For viewing device details
+  const [deviceAdditions, setDeviceAdditions] = useState([
+    {
+      username: "Admin",
+      addedDevice: "",
+      status: "Active",
+    }
+  ]);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [selectedUserForMap, setSelectedUserForMap] = useState(null);
+  const [mappingForm, setMappingForm] = useState({
+    username: "",
+    device: "",
+    status: "Active"
+  });
+  const [mappedDevices, setMappedDevices] = useState(() => {
+    const savedMappings = localStorage.getItem('mappedDevices');
+    return savedMappings ? JSON.parse(savedMappings) : [];
+  });
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
@@ -53,6 +71,10 @@ const DevicePage = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem('mappedDevices', JSON.stringify(mappedDevices));
+  }, [mappedDevices]);
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
@@ -70,26 +92,62 @@ const DevicePage = () => {
     setSelectedDevice(null); // Close the device details card
   };
 
-  const handleEditDevice = async (updatedDevice) => {
-    try {
-      const response = await axios.put(`http://localhost:4000/updateDevice/${updatedDevice._id}`, updatedDevice);
-      const updatedData = data.map((device) =>
-        device._id === updatedDevice._id ? response.data : device
+  // Add this function to get available devices (not yet mapped)
+  const getAvailableDevices = () => {
+    const mappedDeviceNames = mappedDevices.map(md => md["added device"]);
+    return data.filter(device => !mappedDeviceNames.includes(device.dname));
+  };
+
+  // Update the handleDeleteDevice function
+  const handleDeleteDevice = async (device) => {
+    if (activeTab === "mapping") {
+      try {
+        await axios.delete(`http://localhost:4000/deleteDevice/${device._id}`);
+        const updatedData = data.filter((item) => item._id !== device._id);
+        setData(updatedData);
+      } catch (error) {
+        console.error("Error deleting device:", error);
+      }
+    } else {
+      // For mapped devices table - device will be available again in dropdown
+      const updatedMappedDevices = mappedDevices.filter(
+        (item) => item._id !== device._id
       );
-      setData(updatedData);
-    } catch (error) {
-      console.error("Error updating device:", error);
+      setMappedDevices(updatedMappedDevices);
     }
   };
 
-  const handleDeleteDevice = async (device) => {
-    try {
-      await axios.delete(`http://localhost:4000/deleteDevice/${device._id}`);
-      const updatedData = data.filter((item) => item._id !== device._id);
-      setData(updatedData);
-    } catch (error) {
-      console.error("Error deleting device:", error);
-    }
+  const handleMapOpen = () => setIsMapModalOpen(true);
+  const handleMapClose = () => setIsMapModalOpen(false);
+
+  const handleMapDevice = (device) => {
+    const newMappedDevice = {
+      username: "Admin", // Replace with actual selected user
+      "added device": device.dname,
+      status: "Active",
+      _id: device._id
+    };
+    setDeviceAdditions([...deviceAdditions, newMappedDevice]);
+    setIsMapModalOpen(false);
+  };
+
+  const handleMapFormChange = (e) => {
+    const { name, value } = e.target;
+    setMappingForm({ ...mappingForm, [name]: value });
+  };
+
+  const handleMapSubmit = async (e) => {
+    e.preventDefault();
+    const newMapping = {
+      username: mappingForm.username,
+      "added device": mappingForm.device,
+      status: mappingForm.status,
+      _id: Date.now() // temporary ID for demo
+    };
+    const updatedMappings = [...mappedDevices, newMapping];
+    setMappedDevices(updatedMappings);
+    setMappingForm({ username: "", device: "", status: "Active" });
+    setIsMapModalOpen(false);
   };
 
   const filteredData = data.filter((device) =>
@@ -98,18 +156,36 @@ const DevicePage = () => {
     device.macid.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const mappingTableData = filteredData.map((device) => ({
+    "device name": device.dname,
+    "device unique number": device.dnum,
+    "mac id": device.macid,
+    _id: device._id
+  }));
+
+  const additionTableData = mappedDevices.length > 0 ? mappedDevices : [];
+
   return (
     <DashboardLayout>
       <div className="overflow-x-auto">
         <div className="flex w-full items-center pb-6">
           <h1 className="pl-10 font-semibold text-[32px] text-black">Device Management</h1>
           <div className="absolute right-9">
-            <Button
-              className="bg-black text-white border-black border-[1px] font-bold py-2 px-4 rounded"
-              onClick={handleOpen}
-            >
-              ADD DEVICE
-            </Button>
+            {activeTab === "mapping" ? (
+              <Button
+                className="bg-black text-white border-black border-[1px] font-bold py-2 px-4 rounded"
+                onClick={handleOpen}
+              >
+                ADD DEVICE
+              </Button>
+            ) : (
+              <Button
+                className="bg-black text-white border-black border-[1px] font-bold py-2 px-4 rounded"
+                onClick={handleMapOpen}
+              >
+                MAP DEVICE
+              </Button>
+            )}
           </div>
         </div>
         <div className="ml-10 mr-9 flex flex-row gap-14 border-b-2 border-gray-200 w-auto">
@@ -122,7 +198,7 @@ const DevicePage = () => {
                 activeTab === "mapping" ? "text-black" : ""
               }`}
             >
-              Device Mapping
+              Device Addition
             </h1>
             <div
               className={`w-full border-b-2 ${
@@ -139,7 +215,7 @@ const DevicePage = () => {
                 activeTab === "addition" ? "text-black" : ""
               }`}
             >
-              Device Addition
+              Device Mapping
             </h1>
             <div
               className={`w-full border-b-2 ${
@@ -160,36 +236,19 @@ const DevicePage = () => {
         {activeTab === "mapping" && (
           <Table
             columns={["Device Name", "Device Unique Number", "MAC ID"]}
-            data={filteredData.map((device) => ({
-              dname: device.dname,
-              dnum: device.dnum,
-              macid: device.macid,
-            }))}
-            renderRow={(device, columns) => (
-              columns.map((column, colIndex) => (
-                <td key={colIndex} className="p-3 text-center">
-                  {column === "Device Name" && device.dname}
-                  {column === "Device Unique Number" && device.dnum}
-                  {column === "MAC ID" && device.macid}
-                </td>
-              ))
-            )}
-            onViewDetails={(device) => handleViewDevice(device)}
-            showDeviceColumns={true}
-            showEditDeleteActions={false}
+            data={mappingTableData}
+            onEditUser={null}  // Set to null to disable edit functionality
+            onDeleteUser={handleDeleteDevice}
+            showEditAction={false}  // Add this prop to hide edit button
           />
         )}
         {activeTab === "addition" && (
           <Table
             columns={["Username", "Added Device", "Status"]}
-            data={filteredData.map((device) => ({
-              name: device.dname, // Replace with actual username if available
-              email: device.dname,
-              address: device.status || "Pending", // Replace with actual status if available
-            }))}
-            onViewDetails={(device) => handleViewDevice(device)}
-            showDeviceColumns={false}
-            showEditDeleteActions={false} // Disable Edit and Delete actions
+            data={additionTableData}
+            onEditUser={null}  
+            onDeleteUser={handleDeleteDevice}
+            showEditAction={false} 
           />
         )}
         {isOpen && (
@@ -231,6 +290,82 @@ const DevicePage = () => {
                     type="submit"
                   >
                     SAVE
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        {isMapModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-xl text-black font-bold">Map Device</h2>
+              <form onSubmit={handleMapSubmit}>
+                <div className="flex flex-col gap-5 justify-center mt-5">
+                  <CreateCard
+                    placeholder="Username"
+                    name="username"
+                    value={mappingForm.username}
+                    onChange={handleMapFormChange}
+                  />
+                  <select
+                    name="device"
+                    value={mappingForm.device}
+                    onChange={handleMapFormChange}
+                    className="pl-4 h-9 w-full border-[1px] rounded-md border-[#9C9C9C] outline-none"
+                  >
+                    <option value="">Select Device</option>
+                    {getAvailableDevices().map((device) => (
+                      <option key={device._id} value={device.dname}>
+                        {device.dname}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex flex-row gap-6 pt-[5px]">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Active"
+                        checked={mappingForm.status === 'Active'}
+                        onChange={handleMapFormChange}
+                      />
+                      <span className="ml-1">Active</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Inactive"
+                        checked={mappingForm.status === 'Inactive'}
+                        onChange={handleMapFormChange}
+                      />
+                      <span className="ml-1">Inactive</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Block"
+                        checked={mappingForm.status === 'Block'}
+                        onChange={handleMapFormChange}
+                      />
+                      <span className="ml-1">Block</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="flex flex-row gap-2 pt-8 justify-end">
+                  <Button
+                    className="bg-black text-white border-1 border-black cursor-pointer font-bold py-2 px-4 rounded"
+                    onClick={handleMapClose}
+                  >
+                    CANCEL
+                  </Button>
+                  <Button
+                    className="font-bold py-2 px-4 rounded border-1 border-black text-white bg-black"
+                    type="submit"
+                  >
+                    MAP
                   </Button>
                 </div>
               </form>

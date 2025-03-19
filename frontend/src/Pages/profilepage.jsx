@@ -36,7 +36,6 @@ function ProfilePage() {
   const handleChange = (e) => setNewUser({ ...newUser, [e.target.name]: e.target.value });
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
-  // Function to get the color for the status
   const getStatusColor = (status) => {
     switch (status) {
       case 'Active':
@@ -89,7 +88,6 @@ function ProfilePage() {
     row.address.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Define table columns
   const columns = ["Name", "Email", "Address", "Status"];
 
   return (
@@ -157,27 +155,36 @@ function ProfilePage() {
                     <CreateCard type="password" placeholder="Password" name="password" onChange={handleChange} />
                     <CreateCard type="number" placeholder="Pin" name="pin" onChange={handleChange} />
                     <div className="flex flex-row gap-6 pt-[5px]">
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Active"
-                        checked={newUser.status === 'Active'}
-                        onChange={handleChange}
-                      /> Active
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Inactive"
-                        checked={newUser.status === 'Inactive'}
-                        onChange={handleChange}
-                      /> Inactive
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Block"
-                        checked={newUser.status === 'Block'}
-                        onChange={handleChange}
-                      /> Block
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="status"
+                          value="Active"
+                          checked={newUser.status === 'Active'}
+                          onChange={handleChange}
+                        />
+                        <span className="ml-1 text-green-500">Active</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="status"
+                          value="Inactive"
+                          checked={newUser.status === 'Inactive'}
+                          onChange={handleChange}
+                        />
+                        <span className="ml-1 text-blue-500">Inactive</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="status"
+                          value="Block"
+                          checked={newUser.status === 'Block'}
+                          onChange={handleChange}
+                        />
+                        <span className="ml-1 text-red-500">Block</span>
+                      </label>
                     </div>
                     <div className="flex flex-row gap-2 pt-8 justify-end">
                       <div role='button' className="bg-black text-white cursor-pointer font-bold py-2 px-4 rounded " id="btn" onClick={handleClose}>

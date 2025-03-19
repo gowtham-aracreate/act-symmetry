@@ -21,7 +21,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
     } else {
       onSave(formData);
     }
-    onClose(); // Close the modal after saving or editing
+    onClose(); 
   };
 
   if (!isOpen) {
