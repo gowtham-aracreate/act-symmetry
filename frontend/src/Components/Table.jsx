@@ -61,10 +61,25 @@ const Table = ({ data, columns, onEditUser, onDeleteUser, showActions, viewMode 
     setSelectedUser(null);
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Active':
+        return 'text-green-500';
+      case 'Inactive':
+        return 'text-orange-500';
+      case 'Block':
+        return 'text-red-500';
+      default:
+        return '';
+    }
+  };
+
   const currentData = data.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const columnWidth = `${100 / (columns.length + 1.5)}%`; // +1.5 to account for S.No (0.5) and Actions (1) columns
 
   return (
     <div className="pr-10 pl-10 pt-6 ">
@@ -107,7 +122,7 @@ const Table = ({ data, columns, onEditUser, onDeleteUser, showActions, viewMode 
             <button
               key={index + 1}
               onClick={() => handleClick(index + 1)}
-              className={`px-3 py-1 gap-0 border-[1px] border-gray-300 rounded cursor-pointer ${currentPage === index + 1 ? 'bg-blue-600 text-white' : ''}`}
+              className={`px-3 py-1 gap-0 border-[1px] border-gray-300 rounded cursor-pointer ${currentPage === index + 1 ? 'bg-black text-white' : ''}`}
             >
               {index + 1}
             </button>

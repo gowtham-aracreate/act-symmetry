@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Label from '../Components/Label';
 import Button from '../Components/Button';
+import admin_logo from '../assets/images/admin_logo.png';
 import { Eye, EyeOff } from 'lucide-react';
 import './login.css';
 
@@ -35,8 +36,11 @@ const Login = () => {
   };
 
   return (
-    <div className="@container w-150">
-      <div className="bg-white mt-[195px] mr-[132px] ml-[130px]">
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div className="flex justify-center mb-4">
+          <img src={admin_logo} alt="Admin Logo" className="h-16 w-18" />
+        </div>
         <h1 className="font-bold text-2xl mb-4 text-center">Welcome back</h1>
         <p className="text-gray-600 mb-6 text-center">Please provide user credentials to login</p>
 
@@ -78,13 +82,13 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between mb-6 ml-50">
+          <div className="flex items-center justify-between mb-6 ml-60">
             <a href="#" onClick={() => navigate('/forget-password')} className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800">
               Forgot Password?
             </a>
           </div>
 
-          <Button id="button" type="submit" className="flex items-center justify-center ml-7">
+          <Button id="button" type="submit" className="flex items-center justify-center ml-14">
             Log In
           </Button>
         </form>
