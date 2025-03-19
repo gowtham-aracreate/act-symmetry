@@ -1,34 +1,31 @@
-import React from "react";
+import React from 'react';
 
 const DeviceDetailsCard = ({ device, onClose }) => {
-  if (!device) return null;
-
-  console.log("Device Details:", device); // Debugging: Check the device object
-
   return (
     <div className="fixed inset-0 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-bold text-black mb-4">Device Details</h2>
-        <div className="flex flex-col gap-4">
-          <div>
-            <span className="font-semibold">Device Name:</span> {device.dname || "N/A"}
-          </div>
-          <div>
-            <span className="font-semibold">Device Unique Number:</span> {device.dnum}
-          </div>
-          <div>
-            <span className="font-semibold">MAC Address:</span> {device.macid || "N/A"}
-          </div>
-          {device.status && (
-            <div>
-              <span className="font-semibold">Status:</span> {device.status || "N/A"}
+      <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl text-blue-400 font-bold">Device Details</h2>
+          <button onClick={onClose} className="text-black bg-white cursor-pointer text-lg font-bold">X</button>
+        </div>
+        <hr className="w-full my-4" />
+        <div className="space-y-4">
+          {Object.entries(device).map(([key, value]) => (
+            <div key={key} className="flex items-center">
+              <span className="font-semibold w-40">{key}:</span>
+              <span className={`${key === "Status" ? 
+                value === "Active" ? "text-green-500" : 
+                value === "Inactive" ? "text-blue-500" : 
+                "text-red-500" : ""}`}>
+                {value}
+              </span>
             </div>
-          )}
+          ))}
         </div>
         <div className="flex justify-end mt-6">
-          <button
-            className="bg-black text-white px-4 py-2 rounded"
+          <button 
             onClick={onClose}
+            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
           >
             Close
           </button>

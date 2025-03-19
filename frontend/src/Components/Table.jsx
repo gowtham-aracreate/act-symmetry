@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Eye, Edit, Trash } from "lucide-react";
 import Modal from './Modals';
 
-const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true }) => {
+const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true, onViewDetails }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -26,10 +26,14 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true 
     }
   };
 
-  const handleViewDetails = (user) => {
-    setSelectedUser(user);
-    setModalMode('view');
-    setIsModalOpen(true);
+  const handleViewDetails = (item) => {
+    if (onViewDetails) {
+      onViewDetails(item);
+    } else {
+      setSelectedUser(item);
+      setModalMode('view');
+      setIsModalOpen(true);
+    }
   };
 
   const handleEditUser = (user) => {

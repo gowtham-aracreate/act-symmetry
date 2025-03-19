@@ -84,8 +84,20 @@ const DevicePage = () => {
   };
 
   const handleViewDevice = (device) => {
-    console.log("Viewing Device:", device);
-    setSelectedDevice(device); // Set the selected device for viewing
+    // Determine what type of data we're viewing based on the active tab
+    const viewData = activeTab === "mapping" ? 
+      {
+        "Device Name": device["device name"],
+        "Device Number": device["device unique number"],
+        "MAC ID": device["mac id"]
+      } :
+      {
+        "Username": device["username"],
+        "Device": device["added device"],
+        "Status": device["status"]
+      };
+    
+    setSelectedDevice(viewData);
   };
 
   const handleCloseDeviceDetails = () => {
@@ -240,6 +252,7 @@ const DevicePage = () => {
             onEditUser={null}  // Set to null to disable edit functionality
             onDeleteUser={handleDeleteDevice}
             showEditAction={false}  // Add this prop to hide edit button
+            onViewDetails={handleViewDevice}  // Add this prop
           />
         )}
         {activeTab === "addition" && (
@@ -249,6 +262,7 @@ const DevicePage = () => {
             onEditUser={null}  
             onDeleteUser={handleDeleteDevice}
             showEditAction={false} 
+            onViewDetails={handleViewDevice}  // Add this prop
           />
         )}
         {isOpen && (
