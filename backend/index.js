@@ -106,6 +106,38 @@ app.post('/createExtended', async (req, res) => {
     }
 });
 
+app.put('/updateExtendedUser/:id', async (req, res) => {
+    const { id } = req.params; // Extract the user ID from the URL
+    const { name, email, password, address, locality, statecode, pin, status } = req.body;
+
+    try {
+        // If a new password is provided, hash it
+        let updatedFields = { name, email, address, locality, statecode, pin, status };
+        if (password) {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updatedFields.password = hashedPassword;
+        }
+
+        // Find and update the user by ID
+        const updatedUser = await CreatedUsers.findByIdAndUpdate(
+            id,
+            updatedFields,
+            { new: true, runValidators: true } // Return the updated document and validate input
+        );
+
+        // If the user is not found, return a 404 error
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        // Respond with the updated user
+        res.json({ message: "User updated successfully!", user: updatedUser });
+    } catch (error) {
+        console.error('Error updating extended user:', error);
+        res.status(500).send('Error updating extended user');
+    }
+});
+
 app.post('/newdevice', async(req, res) => {
     try {
         const { dname, dnum, macid } = req.body;
@@ -147,19 +179,32 @@ app.get('/deviceMapping', async (req, res) => {
 });
 
 app.put('/updateDevice/:id', async (req, res) => {
-    const { id } = req.params;
-    const { dname, dnum, macid, status } = req.body;
     try {
-        const updatedDevice = await NewDeviceUsers.findByIdAndUpdate(
-            id,
-            { dname, dnum, macid, status },
-            { new: true }
-        );
-        res.json(updatedDevice);
+      const { id } = req.params;
+      const { dname, dnum, macid } = req.body;
+  
+      // Validate input
+      if (!dname || !dnum || !macid) {
+        return res.status(400).json({ message: 'All fields are required' });
+      }
+  
+      // Update the device in the database
+      const updatedDevice = await DeviceModel.findByIdAndUpdate(
+        id,
+        { dname, dnum, macid },
+        { new: true }
+      );
+  
+      if (!updatedDevice) {
+        return res.status(404).json({ message: 'Device not found' });
+      }
+  
+      res.status(200).json({ device: updatedDevice });
     } catch (error) {
-        res.status(500).json({ error: "Error updating device" });
+      console.error('Error updating device:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
     }
-});
+  });
 
 app.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
@@ -247,7 +292,7 @@ app.put('/updateUser/:email', async (req, res) => {
         const updatedUser = await CreatedUsers.findOneAndUpdate(
             { email },
             { name, address, locality, statecode, pin, status },
-            { new: true }
+            { new: true } // Return the updated document
         );
         res.json(updatedUser);
     } catch (error) {

@@ -1,37 +1,22 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Label from '../Components/Label';
 import Button from '../Components/Button';
-import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
-  const [error, setError] = useState("");
-  const [isTouched, setIsTouched] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!#%*?&])[A-Za-z\d@$!#%*?&]{8}$/;
 
-  const handlePasswordChange = (e) => {
-    const password = e.target.value;
-    setPass(password);
-
-    if (!passwordRegex.test(password)) {
-      setError("Password must contain 1 uppercase, 1 lowercase, 1 digit, 1 special character, and be exactly 8 characters long.");
-    } else {
-      setError('');
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  const handleUser = async (e) => {
     e.preventDefault();
-
-    if (!passwordRegex.test(pass)) {
-      setError("Password must contain 1 uppercase, 1 lowercase, 1 digit, 1 special character, and be exactly 8 characters long.");
-      return;
-    }
+    const UserDetails = {
+      name,
+      email,
+      password,
+    };
 
     try {
       const response = await axios.post('http://localhost:4000/create', UserDetails);
@@ -41,8 +26,7 @@ const RegisterPage = () => {
       setPassword('');
       navigate('/');
     } catch (error) {
-      console.error("Error registering:", error);
-      alert("Register failed. Please check your credentials.");
+      console.error('Error creating user', error);
     }
   };
 

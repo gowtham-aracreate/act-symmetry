@@ -17,7 +17,9 @@ const App = () => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/device-management" element={<DevicePage />} />
+          <Route path="/device-management" element={
+      <DevicePage />
+    } />
         </Routes>
       </Router>
     </div>

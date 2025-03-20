@@ -61,6 +61,12 @@ const Table = ({ data, columns, onEditUser, onDeleteUser, showActions, viewMode 
     setSelectedUser(null);
   };
 
+  const handleEditDevice = (device) => {
+    setSelectedDevice(device); // Set the selected device for editing
+    setModalMode('edit'); // Set the modal mode to 'edit'
+    setIsModalOpen(true); // Open the modal
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Active':
