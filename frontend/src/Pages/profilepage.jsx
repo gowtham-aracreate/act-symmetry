@@ -21,9 +21,13 @@ function ProfilePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [data, setData] = useState([]);
 
+  // Fetch data from the backend
   useEffect(() => {
     axios.get('http://localhost:4000/createdUsers')
-      .then(response => { setData(response.data); console.log(response.data); })
+      .then(response => {
+        setData(response.data); 
+        console.log(response.data);
+      })
       .catch(error => console.error('Error fetching data:', error));
   }, []);
 
@@ -77,6 +81,7 @@ function ProfilePage() {
       .catch(error => console.error('Error deleting user:', error));
   };
 
+  // Filter data based on the search term
   const filteredData = data.filter(row =>
     row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     row.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -115,22 +120,34 @@ function ProfilePage() {
               </div>
             </div>
             <Table
-              name="Username"
-              email="Email ID"
-              address="Address"
-              status="Status"
-              columns={columns}
-              showActions={true}
-              action="Actions"
-              data={filteredData}
-              onEditUser={handleEditUser}
-              onDeleteUser={handleDeleteUser}
-              getStatusColor={getStatusColor}
-              viewMode="profile" // Pass the viewMode prop
+              columns={["Name", "Email", "Address", "Status"]}
+              data={filteredData.map((user) => ({
+                name: user.name,
+                email: user.email,
+                address: user.address,
+                status: user.status,
+              }))}
+              renderRow={(user, columns) => (
+                columns.map((column, colIndex) => (
+                  <td key={colIndex} className="p-3 text-center">
+                    {column === "Name" && user.name}
+                    {column === "Email" && user.email}
+                    {column === "Address" && user.address}
+                    {column === "Status" && (
+                      <span className={getStatusColor(user.status)}>
+                        {user.status || "N/A"}
+                      </span>
+                    )}
+                  </td>
+                ))
+              )}
+              onEditUser={(user) => handleEditUser(user)}
+              onDeleteUser={(user) => handleDeleteUser(user)}
+              showEditDeleteActions={true}
             />
           </div>
           {isOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 bg-gray-800">
+            <div className="fixed inset-0 flex items-center justify-center ">
               <div className="bg-white p-6 rounded-lg shadow-lg">
                 <h2 className="text-xl text-black font-bold">Create New User</h2>
                 <form onSubmit={handleSubmit}>
@@ -143,30 +160,39 @@ function ProfilePage() {
                     <CreateCard type="password" placeholder="Password" name="password" onChange={handleChange} />
                     <CreateCard type="number" placeholder="Pin" name="pin" onChange={handleChange} />
                     <div className="flex flex-row gap-6 pt-[5px]">
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Active"
-                        checked={newUser.status === 'Active'}
-                        onChange={handleChange}
-                      /> Active
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Inactive"
-                        checked={newUser.status === 'Inactive'}
-                        onChange={handleChange}
-                      /> Inactive
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Block"
-                        checked={newUser.status === 'Block'}
-                        onChange={handleChange}
-                      /> Block
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="status"
+                          value="Active"
+                          checked={newUser.status === 'Active'}
+                          onChange={handleChange}
+                        />
+                        <span className="ml-1 text-green-500">Active</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="status"
+                          value="Inactive"
+                          checked={newUser.status === 'Inactive'}
+                          onChange={handleChange}
+                        />
+                        <span className="ml-1 text-blue-500">Inactive</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="status"
+                          value="Block"
+                          checked={newUser.status === 'Block'}
+                          onChange={handleChange}
+                        />
+                        <span className="ml-1 text-red-500">Block</span>
+                      </label>
                     </div>
                     <div className="flex flex-row gap-2 pt-8 justify-end">
-                      <div role='button' className="bg-[#2899CB] text-white cursor-pointer font-bold py-2 px-4 rounded " id="btn" onClick={handleClose}>
+                      <div role='button' className="bg-black text-white cursor-pointer font-bold py-2 px-4 rounded " id="btn" onClick={handleClose}>
                         Cancel
                       </div>
                       <Button className="font-bold py-2 px-4 rounded bg-black text-white" id="btn" type="submit">

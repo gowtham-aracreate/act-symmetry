@@ -21,6 +21,7 @@ function DashboardPage() {
         <Card
           name="Device Management"
           src={device_black}
+          onclick={() => { navigate('/device-management') }}
 
         />
         <Card

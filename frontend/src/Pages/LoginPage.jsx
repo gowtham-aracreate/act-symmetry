@@ -46,7 +46,7 @@ const Login = () => {
 
         <form onSubmit={handleUser}>
           <div className="mb-4">
-            <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2" text="Email" />
+            <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2" text="Email" />Email
             <input
               onChange={(e) => setEmail(e.target.value)}
               value={email}
@@ -58,7 +58,7 @@ const Login = () => {
           </div>
 
           <div className="mb-6">
-            <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password" />
+            <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password" />Password
             <div className="relative">
               <input
                 onChange={(e) => setPassword(e.target.value)}

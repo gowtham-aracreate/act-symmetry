@@ -1,68 +1,79 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 import DashboardLayout from "../Layouts/DashboardLayout";
-import Button from '../Components/Button';
+import Button from "../Components/Button";
 import Table from "../Components/Table";
 import CreateCard from "../Components/CreateCard";
+import DeviceDetailsCard from "../Components/DeviceDetailsCard";
 
 const DevicePage = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('deviceAddition');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState("mapping"); // Default tab is "mapping"
+  const [searchTerm, setSearchTerm] = useState("");
   const [newDevice, setNewDevice] = useState({
-    name: '',
-    dname: '',
-    dnum: '',
-    macid: '',
-    status: 'Active'
+    dname: "",
+    dnum: "",
+    macid: "",
   });
   const [data, setData] = useState([]);
-  const [mappingData, setMappingData] = useState([]);
-
-  useEffect(() => {
-    axios.get('http://localhost:4000/newdevice')
-      .then(response => setData(response.data))
-      .catch(error => console.error('Error fetching data:', error));
-
-    axios.get('http://localhost:4000/deviceMapping')
-      .then(response => setMappingData(response.data))
-      .catch(error => console.error('Error fetching mapping data:', error));
-  }, []);
+  const [selectedDevice, setSelectedDevice] = useState(null); // For viewing device details
+  const [deviceAdditions, setDeviceAdditions] = useState([
+    {
+      username: "Admin",
+      addedDevice: "",
+      status: "Active",
+    }
+  ]);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [selectedUserForMap, setSelectedUserForMap] = useState(null);
+  const [mappingForm, setMappingForm] = useState({
+    username: "",
+    device: "",
+    status: "Active"
+  });
+  const [mappedDevices, setMappedDevices] = useState(() => {
+    const savedMappings = localStorage.getItem('mappedDevices');
+    return savedMappings ? JSON.parse(savedMappings) : [];
+  });
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
-  const handleChange = (e) => setNewDevice({ ...newDevice, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewDevice({ ...newDevice, [name]: value });
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log('Submitting new device:', newDevice);
-    if (activeTab === 'deviceAddition') {
-      axios.post('http://localhost:4000/newdevice', newDevice)
-        .then(response => {
-          console.log('Device created:', response.data);
-          setData([...data, response.data.device]); // Ensure the correct data is added to the device addition table
-          setNewDevice({ name: '', dname: '', dnum: '', macid: '', status: 'Active' });
-          setIsOpen(false);
-        })
-        .catch(error => {
-          console.error('Error creating device:', error);
-          alert('Error creating device');
-        });
-    } else if (activeTab === 'deviceMapping') {
-      axios.post('http://localhost:4000/deviceMapping', newDevice)
-        .then(response => {
-          console.log('Device mapping created:', response.data);
-          setMappingData([...mappingData, response.data.mapping]); // Ensure the correct data is added to the device mapping table
-          setNewDevice({ mname: '', mnum: '', status: 'Active' });
-          setIsOpen(false);
-        })
-        .catch(error => {
-          console.error('Error creating device mapping:', error);
-          alert('Error creating device mapping');
-        });
+    try {
+      const response = await axios.post("http://localhost:4000/newdevice", newDevice);
+      if (response.status === 201) {
+        setData([...data, response.data.device]); // Add the new device to the table
+        setNewDevice({ dname: "", dnum: "", macid: "" }); // Reset the form
+        setIsOpen(false); // Close the modal
+      }
+    } catch (error) {
+      console.error("Error adding device:", error);
     }
   };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/newdevice");
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('mappedDevices', JSON.stringify(mappedDevices));
+  }, [mappedDevices]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -72,38 +83,83 @@ const DevicePage = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleEditDevice = (updatedDevice) => {
-    axios.put(`http://localhost:4000/updateDevice/${updatedDevice.id}`, updatedDevice)
-      .then(response => {
-        const updatedData = data.map((device) =>
-          device.id === updatedDevice.id ? response.data : device
-        );
-        setData(updatedData);
-
-        const updatedMappingData = mappingData.map((device) =>
-          device.id === updatedDevice.id ? response.data : device
-        );
-        setMappingData(updatedMappingData);
-      })
-      .catch(error => {
-        console.error('Error updating device:', error);
-        alert('Error updating device');
-      });
+  const handleViewDevice = (device) => {
+    // Determine what type of data we're viewing based on the active tab
+    const viewData = activeTab === "mapping" ? 
+      {
+        "Device Name": device["device name"],
+        "Device Number": device["device unique number"],
+        "MAC ID": device["mac id"]
+      } :
+      {
+        "Username": device["username"],
+        "Device": device["added device"],
+        "Status": device["status"]
+      };
+    
+    setSelectedDevice(viewData);
   };
 
-  const handleDeleteDevice = (device) => {
-    axios.delete(`http://localhost:4000/deleteDevice/${device.id}`)
-      .then(response => {
-        const updatedData = data.filter((item) => item.id !== device.id);
-        setData(updatedData);
+  const handleCloseDeviceDetails = () => {
+    setSelectedDevice(null); // Close the device details card
+  };
 
-        const updatedMappingData = mappingData.filter((item) => item.id !== device.id);
-        setMappingData(updatedMappingData);
-      })
-      .catch(error => {
-        console.error('Error deleting device:', error);
-        alert('Error deleting device');
-      });
+  // Add this function to get available devices (not yet mapped)
+  const getAvailableDevices = () => {
+    const mappedDeviceNames = mappedDevices.map(md => md["added device"]);
+    return data.filter(device => !mappedDeviceNames.includes(device.dname));
+  };
+
+  // Update the handleDeleteDevice function
+  const handleDeleteDevice = async (device) => {
+    if (activeTab === "mapping") {
+      try {
+        await axios.delete(`http://localhost:4000/deleteDevice/${device._id}`);
+        const updatedData = data.filter((item) => item._id !== device._id);
+        setData(updatedData);
+      } catch (error) {
+        console.error("Error deleting device:", error);
+      }
+    } else {
+      // For mapped devices table - device will be available again in dropdown
+      const updatedMappedDevices = mappedDevices.filter(
+        (item) => item._id !== device._id
+      );
+      setMappedDevices(updatedMappedDevices);
+    }
+  };
+
+  const handleMapOpen = () => setIsMapModalOpen(true);
+  const handleMapClose = () => setIsMapModalOpen(false);
+
+  const handleMapDevice = (device) => {
+    const newMappedDevice = {
+      username: "Admin", // Replace with actual selected user
+      "added device": device.dname,
+      status: "Active",
+      _id: device._id
+    };
+    setDeviceAdditions([...deviceAdditions, newMappedDevice]);
+    setIsMapModalOpen(false);
+  };
+
+  const handleMapFormChange = (e) => {
+    const { name, value } = e.target;
+    setMappingForm({ ...mappingForm, [name]: value });
+  };
+
+  const handleMapSubmit = async (e) => {
+    e.preventDefault();
+    const newMapping = {
+      username: mappingForm.username,
+      "added device": mappingForm.device,
+      status: mappingForm.status,
+      _id: Date.now() // temporary ID for demo
+    };
+    const updatedMappings = [...mappedDevices, newMapping];
+    setMappedDevices(updatedMappings);
+    setMappingForm({ username: "", device: "", status: "Active" });
+    setIsMapModalOpen(false);
   };
 
   const filteredData = data.filter(device =>
@@ -112,136 +168,229 @@ const DevicePage = () => {
     (device.macid || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredMappingData = mappingData.filter(device =>
-    (device.mname || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (device.mnum || '').toString().includes(searchTerm.toLowerCase()) ||
-    (device.status || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const mappingTableData = filteredData.map((device) => ({
+    "device name": device.dname,
+    "device unique number": device.dnum,
+    "mac id": device.macid,
+    _id: device._id
+  }));
 
-  const deviceAdditionColumns = [
-    { header: 'Device Name', accessor: 'dname' },
-    { header: 'Device Unique Number', accessor: 'dnum' },
-    { header: 'MAC ID', accessor: 'macid' },
-  ];
-
-  const deviceMappingColumns = [
-    { header: 'Username', accessor: 'mname' },
-    { header: 'Added Device', accessor: 'mnum' },
-    { header: 'Status', accessor: 'status' },
-  ];
+  const additionTableData = mappedDevices.length > 0 ? mappedDevices : [];
 
   return (
     <DashboardLayout>
       <div className="overflow-x-auto">
         <div className="flex w-full items-center pb-6">
-          <h1 className="pl-10 font-semibold text-[32px] text-[#2899CB]">Device Management</h1>
+          <h1 className="pl-10 font-semibold text-[32px] text-black">Device Management</h1>
           <div className="absolute right-9">
-            {activeTab === 'deviceAddition' && (
-              <Button className="bg-[#2899CB] text-black border-[#2899CB] border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
+            {activeTab === "mapping" ? (
+              <Button
+                className="bg-black text-white border-black border-[1px] font-bold py-2 px-4 rounded"
+                onClick={handleOpen}
+              >
                 ADD DEVICE
               </Button>
-            )}
-            {activeTab === 'deviceMapping' && (
-              <Button className="bg-[#2899CB] text-black border-[#2899CB] border-[1px] font-bold py-2 px-4 rounded" onClick={handleOpen}>
+            ) : (
+              <Button
+                className="bg-black text-white border-black border-[1px] font-bold py-2 px-4 rounded"
+                onClick={handleMapOpen}
+              >
                 MAP DEVICE
               </Button>
             )}
           </div>
         </div>
         <div className="ml-10 mr-9 flex flex-row gap-14 border-b-2 border-gray-200 w-auto">
-          <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('deviceAddition')}>
-            <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-[#2899CB] ${activeTab === 'deviceAddition' ? 'text-[#2899CB]' : ''}`}>
+          <div
+            className="cursor-pointer flex flex-col items-start"
+            onClick={() => handleTabClick("mapping")}
+          >
+            <h1
+              className={`font-semibold text-[20px] text-black hover:text-red-600 ${
+                activeTab === "mapping" ? "text-black" : ""
+              }`}
+            >
               Device Addition
             </h1>
-            <div className={`w-full border-b-2 ${activeTab === 'deviceAddition' ? 'border-[#2899CB]' : 'border-transparent'} mt-1`}></div>
+            <div
+              className={`w-full border-b-2 ${
+                activeTab === "mapping" ? "border-red-600" : "border-transparent"
+              } mt-1`}
+            ></div>
           </div>
-          <div className="cursor-pointer flex flex-col items-start" onClick={() => handleTabClick('deviceMapping')}>
-            <h1 className={`font-semibold text-[20px] text-[#7E7E7E] hover:text-[#2899CB] ${activeTab === 'deviceMapping' ? 'text-[#2899CB]' : ''}`}>
+          <div
+            className="cursor-pointer flex flex-col items-start"
+            onClick={() => handleTabClick("addition")}
+          >
+            <h1
+              className={`font-semibold text-[20px] text-black hover:text-red-600 ${
+                activeTab === "addition" ? "text-black" : ""
+              }`}
+            >
               Device Mapping
             </h1>
-            <div className={`w-full border-b-2 ${activeTab === 'deviceMapping' ? 'border-[#2899CB]' : 'border-transparent'} mt-1`}></div>
+            <div
+              className={`w-full border-b-2 ${
+                activeTab === "addition" ? "border-red-600" : "border-transparent"
+              } mt-1`}
+            ></div>
           </div>
         </div>
         <div className="pl-10 mb-6 mt-4">
           <input
-            className="pl-2 h-9 w-64 border-[1px] rounded-md border-[#9C9C9C] bg-white outline-0"
+            className="pl-4 h-9 w-64 border-[1px] rounded-md border-[#9C9C9C] outline-none"
             type="text"
-            placeholder="🔍 Search"
+            placeholder="Search"
             value={searchTerm}
             onChange={handleSearchChange}
           />
         </div>
-        {activeTab === 'deviceAddition' && (
+        {activeTab === "mapping" && (
           <Table
-            columns={deviceAdditionColumns}
-            data={filteredData}
-            onEditUser={handleEditDevice}
+            columns={["Device Name", "Device Unique Number", "MAC ID"]}
+            data={mappingTableData}
+            onEditUser={null}  // Set to null to disable edit functionality
             onDeleteUser={handleDeleteDevice}
-            showActions={true} // Show all action buttons
-            viewMode="deviceAddition" // Pass the viewMode prop
+            showEditAction={false}  // Add this prop to hide edit button
+            onViewDetails={handleViewDevice}  // Add this prop
           />
         )}
-        {activeTab === 'deviceMapping' && (
+        {activeTab === "addition" && (
           <Table
-            columns={deviceMappingColumns}
-            data={filteredMappingData}
-            onEditUser={handleEditDevice}
+            columns={["Username", "Added Device", "Status"]}
+            data={additionTableData}
+            onEditUser={null}  
             onDeleteUser={handleDeleteDevice}
-            showActions={true} // Show all action buttons
-            viewMode="deviceMapping" // Pass the viewMode prop
+            showEditAction={false} 
+            onViewDetails={handleViewDevice}  // Add this prop
           />
         )}
         {isOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-opacity-75 bg-gray-800">
+          <div className="fixed inset-0 flex items-center justify-center">
             <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-xl text-[#2899CB] font-bold">{activeTab === 'deviceAddition' ? 'ADD NEW DEVICE' : 'MAP DEVICE'}</h2>
+              <h2 className="text-xl text-black font-bold">ADD NEW DEVICE</h2>
               <form onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-5 justify-center mt-5">
-                  {activeTab === 'deviceAddition' && (
-                    <CreateCard placeholder="Device Name" name="dname" value={newDevice.dname} onChange={handleChange} />
-                  )}
-                  {activeTab === 'deviceAddition' && (
-                    <CreateCard placeholder="Device Number" name="dnum" value={newDevice.dnum} onChange={handleChange} />
-                  )}
-                  {activeTab === 'deviceAddition' && (
-                    <CreateCard placeholder="MAC Address" name="macid" value={newDevice.macid} onChange={handleChange} />
-                  )}
-                  {activeTab === 'deviceMapping' && (
-                    <CreateCard placeholder="Username" name="name" value={newDevice.name} onChange={handleChange} />
-                  )}
-                  {activeTab === 'deviceMapping' && (
-                    <CreateCard placeholder="Device Mapping" name="dmap" onChange={handleChange} />
-                  )}
-                  {activeTab === 'deviceMapping' && (
-                    <div className="flex flex-row gap-6 pt-[5px]">
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Active"
-                        checked={newDevice.status === 'Active'}
-                        onChange={handleChange}
-                      /> Active
-                      <input
-                        type="radio"
-                        name="status"
-                        value="Inactive"
-                        checked={newDevice.status === 'Inactive'}
-                        onChange={handleChange}
-                      /> Inactive
-                    </div>
-                  )}
+                  <CreateCard
+                    placeholder="Device Name"
+                    name="dname"
+                    value={newDevice.dname}
+                    onChange={handleChange}
+                  />
+                  <CreateCard
+                    placeholder="Device Number"
+                    name="dnum"
+                    value={newDevice.dnum}
+                    onChange={handleChange}
+                  />
+                  <CreateCard
+                    placeholder="MAC Address"
+                    name="macid"
+                    value={newDevice.macid}
+                    onChange={handleChange}
+                  />
                 </div>
                 <div className="flex flex-row gap-2 pt-8 justify-end">
-                  <Button className="bg-[#2899CB] text-[#2899CB] border-1 border-[#2899CB] cursor-pointer font-bold py-2 px-4 rounded" id="btn" onClick={handleClose}>
+                  <Button
+                    className="bg-black text-white border-1 border-black cursor-pointer font-bold py-2 px-4 rounded"
+                    id="btn"
+                    onClick={handleClose}
+                  >
                     CANCEL
                   </Button>
-                  <Button className="font-bold py-2 px-4 rounded border-1 border-[#2899CB] text-[#2899CB] bg-[#2899CB]" id="btn" type="submit">
+                  <Button
+                    className="font-bold py-2 px-4 rounded border-1 border-black text-white bg-black"
+                    id="btn"
+                    type="submit"
+                  >
                     SAVE
                   </Button>
                 </div>
               </form>
             </div>
           </div>
+        )}
+        {isMapModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-xl text-black font-bold">Map Device</h2>
+              <form onSubmit={handleMapSubmit}>
+                <div className="flex flex-col gap-5 justify-center mt-5">
+                  <CreateCard
+                    placeholder="Username"
+                    name="username"
+                    value={mappingForm.username}
+                    onChange={handleMapFormChange}
+                  />
+                  <select
+                    name="device"
+                    value={mappingForm.device}
+                    onChange={handleMapFormChange}
+                    className="pl-4 h-9 w-full border-[1px] rounded-md border-[#9C9C9C] outline-none"
+                  >
+                    <option value="">Select Device</option>
+                    {getAvailableDevices().map((device) => (
+                      <option key={device._id} value={device.dname}>
+                        {device.dname}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex flex-row gap-6 pt-[5px]">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Active"
+                        checked={mappingForm.status === 'Active'}
+                        onChange={handleMapFormChange}
+                      />
+                      <span className="ml-1">Active</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Inactive"
+                        checked={mappingForm.status === 'Inactive'}
+                        onChange={handleMapFormChange}
+                      />
+                      <span className="ml-1">Inactive</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="Block"
+                        checked={mappingForm.status === 'Block'}
+                        onChange={handleMapFormChange}
+                      />
+                      <span className="ml-1">Block</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="flex flex-row gap-2 pt-8 justify-end">
+                  <Button
+                    className="bg-black text-white border-1 border-black cursor-pointer font-bold py-2 px-4 rounded"
+                    onClick={handleMapClose}
+                  >
+                    CANCEL
+                  </Button>
+                  <Button
+                    className="font-bold py-2 px-4 rounded border-1 border-black text-white bg-black"
+                    type="submit"
+                  >
+                    MAP
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        {selectedDevice && (
+          <DeviceDetailsCard
+            device={selectedDevice}
+            onClose={handleCloseDeviceDetails}
+          />
         )}
       </div>
     </DashboardLayout>
