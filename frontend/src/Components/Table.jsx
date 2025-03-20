@@ -65,12 +65,6 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true,
     setSelectedUser(null);
   };
 
-  const handleEditDevice = (device) => {
-    setSelectedDevice(device); // Set the selected device for editing
-    setModalMode('edit'); // Set the modal mode to 'edit'
-    setIsModalOpen(true); // Open the modal
-  };
-
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'active':
@@ -89,17 +83,19 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true,
     currentPage * itemsPerPage
   );
 
-  const columnWidth = `${100 / (columns.length + 1.5)}%`; 
+  const columnWidth = `${100 / (columns.length + 2)}%`; // +2 accounts for S.No and Actions columns
 
   return (
     <div className="pr-10 pl-10 pt-6 ">
       <div className="overflow-x-auto rounded-lg">
         <table className="w-full table-fixed">
           <thead>
-            <tr className="bg-[#0A2463] text-white">
-              <th className="pt-3 pb-3 text-center w-1/12">S.no</th>
+            <tr className="bg-black text-white">
+              <th className="p-3 text-center" style={{ width: `calc(${columnWidth} / 2)` }}>S.No</th>
               {columns.map((column, index) => (
-                <th key={index} className="pt-3 pb-3 text-center w-1/5 whitespace-nowrap">{column.header}</th>
+                <th key={index} className="p-3 text-center" style={{ width: columnWidth }}>
+                  {column}
+                </th>
               ))}
               <th className="p-3 text-center" style={{ width: columnWidth }}>Actions</th>
             </tr>
@@ -109,7 +105,9 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true,
               <tr key={index} className="border-b border-gray-300 ">
                 <td className="p-3 text-center">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                 {columns.map((column, colIndex) => (
-                  <td key={colIndex} className="pt-3 pb-3 text-center">{item[column.accessor]}</td>
+                  <td key={colIndex} className={`p-3 text-center break-words ${column.toLowerCase() === 'status' ? getStatusColor(item[column.toLowerCase()]) : ''}`}>
+                    {item[column.toLowerCase()]}
+                  </td>
                 ))}
                 <td className="p-3 text-center flex justify-center items-center space-x-2">
                   <button className="text-gray-500 hover:text-blue-800 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
@@ -145,8 +143,8 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true,
         mode={modalMode}
         onSave={handleSaveUser}
         onEdit={handleSaveUser}
-        onDelete={handleConfirmDeleteUser} // Pass handleConfirmDeleteUser to Modal
-        setModalMode={setModalMode} // Pass setModalMode to Modal
+        onDelete={handleConfirmDeleteUser}
+        setModalMode={setModalMode}
       />
     </div>
   );

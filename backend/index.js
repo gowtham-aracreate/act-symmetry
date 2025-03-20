@@ -44,14 +44,13 @@ const newDeviceSchema = new mongoose.Schema({
 
 const NewDeviceUsers = mongoose.model("newdevice", newDeviceSchema);
 
-const deviceMappingSchema = new mongoose.Schema({
-    name: String,
-    mname:  { type: String, required: true },
-    mnum: { type: Number, required: true },
-    status: { type: String, required: true }
+const mappingDeviceSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    addedDevice: { type: String, required: true },
+    status: { type: String, enum: ['Active', 'Inactive', 'Block'], default: 'Active' }
 });
 
-const DeviceMapping = mongoose.model("deviceMapping", deviceMappingSchema);
+const MappingDevice = mongoose.model("mappingDevice", mappingDeviceSchema);
 
 const otpSchema = new mongoose.Schema({
     email: { type: String, required: true },
@@ -127,33 +126,35 @@ app.get('/newdevice', async (req, res) => {
     }
 });
 
-app.post('/deviceMapping', async(req, res) => {
+app.post('/mappingDevice', async (req, res) => {
+    const { username, addedDevice, status } = req.body;
     try {
-        const { mname, mnum,status } = req.body;
-        const newMapping = new DeviceMapping({ mname, mnum,status });
+        const newMapping = new MappingDevice({ username, addedDevice, status });
         await newMapping.save();
-        res.status(201).json({ message: "Device mapping added successfully!", mapping: newMapping });
-      } catch (error) {
-        res.status(500).json({ error: "Error saving device mapping" });
-      }
+        res.status(201).json({ message: "Mapping created successfully!", mapping: newMapping });
+    } catch (error) {
+        console.error("Error creating mapping:", error);
+        res.status(500).json({ error: "Error creating mapping" });
+    }
 });
 
-app.get('/deviceMapping', async (req, res) => {
+app.get('/mappingDevice', async (req, res) => {
     try {
-        const mappings = await DeviceMapping.find();
+        const mappings = await MappingDevice.find();
         res.json(mappings);
     } catch (error) {
-        res.status(500).json({ error: "Error fetching device mappings" });
+        console.error("Error fetching mappings:", error);
+        res.status(500).json({ error: "Error fetching mappings" });
     }
 });
 
 app.put('/updateDevice/:id', async (req, res) => {
   const { id } = req.params;
-  const { dname, dnum, macid } = req.body;
+  const { dname, dnum, macid , status } = req.body;
   try {
     const updatedDevice = await NewDeviceUsers.findByIdAndUpdate(
       id,
-      { dname, dnum, macid },
+      { dname, dnum, macid,status },
       { new: true }
     );
     res.json(updatedDevice);
@@ -173,6 +174,18 @@ app.delete('/deleteDevice/:id', async (req, res) => {
     res.status(500).send("Error deleting device");
   }
 });
+
+app.delete('/mappingDevice/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await MappingDevice.findByIdAndDelete(id);
+        res.sendStatus(204);
+    } catch (error) {
+        console.error("Error deleting mapping:", error);
+        res.status(500).json({ error: "Error deleting mapping" });
+    }
+});
+
 
 app.post("/forgot-password", async (req, res) => {
     const { email } = req.body;

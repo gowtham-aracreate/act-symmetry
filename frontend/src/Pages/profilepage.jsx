@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Button from "../Components/Button";
+import Button from '../Components/Button';
 import CreateCard from '../Components/CreateCard';
 import DashboardLayout from '../Layouts/DashboardLayout';
 import Table from '../Components/Table';
@@ -23,13 +23,17 @@ function ProfilePage() {
 
   // Fetch data from the backend
   useEffect(() => {
-    axios.get('http://localhost:4000/createdUsers')
-      .then(response => {
-        setData(response.data); 
-        console.log(response.data);
-      })
-      .catch(error => console.error('Error fetching data:', error));
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:4000/createdUsers');
+      setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
@@ -61,24 +65,29 @@ function ProfilePage() {
       .catch(error => console.error('Error creating user:', error));
   };
 
-  const handleEditUser = (updatedUser) => {
-    axios.put(`http://localhost:4000/updateUser/${updatedUser.email}`, updatedUser)
-      .then(response => {
-        const updatedData = data.map((user) =>
-          user.email === updatedUser.email ? response.data : user
-        );
-        setData(updatedData);
-      })
-      .catch(error => console.error('Error updating user:', error));
+  const handleEditUser = async (updatedUser) => {
+    try {
+      const response = await axios.put(`
+        http://localhost:4000/updateUser/${updatedUser.email}`,
+        updatedUser
+      );
+      const updatedData = data.map((user) =>
+        user.email === updatedUser.email ? response.data : user
+      );
+      setData(updatedData);
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
   };
 
-  const handleDeleteUser = (user) => {
-    axios.delete(`http://localhost:4000/deleteUser/${user.email}`)
-      .then(response => {
-        const updatedData = data.filter((item) => item.email !== user.email);
-        setData(updatedData);
-      })
-      .catch(error => console.error('Error deleting user:', error));
+  const handleDeleteUser = async (user) => {
+    try {
+      await axios.delete(`http://localhost:4000/deleteUser/${user.email}`);
+      const updatedData = data.filter((item) => item.email !== user.email);
+      setData(updatedData);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
   };
 
   // Filter data based on the search term
@@ -88,12 +97,7 @@ function ProfilePage() {
     row.address.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const columns = [
-    { header: 'Name', accessor: 'name' },
-    { header: 'Email', accessor: 'email' },
-    { header: 'Address', accessor: 'address' },
-    { header: 'Status', accessor: 'status' }
-  ];
+  const columns = ["Name", "Email", "Address", "Status"];
 
   return (
     <DashboardLayout>
@@ -111,7 +115,7 @@ function ProfilePage() {
             <div className="pl-10 mb-6">
               <div className="relative">
                 <input
-                  className="pl-10 h-9 w-64 border border-gray-400 rounded-md bg-white outline-0 bg-[url('/path/to/Search.png')] bg-no-repeat bg-[10px] bg-contain"
+                  className="pl-4 h-9 w-64 border-[1px] rounded-md border-[#9C9C9C] outline-none"
                   type="text"
                   placeholder="Search"
                   value={searchTerm}
@@ -126,6 +130,7 @@ function ProfilePage() {
                 email: user.email,
                 address: user.address,
                 status: user.status,
+                pin: user.pin,
               }))}
               renderRow={(user, columns) => (
                 columns.map((column, colIndex) => (
@@ -168,7 +173,7 @@ function ProfilePage() {
                           checked={newUser.status === 'Active'}
                           onChange={handleChange}
                         />
-                        <span className="ml-1 text-green-500">Active</span>
+                        <span className="ml-1">Active</span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -178,7 +183,7 @@ function ProfilePage() {
                           checked={newUser.status === 'Inactive'}
                           onChange={handleChange}
                         />
-                        <span className="ml-1 text-blue-500">Inactive</span>
+                        <span className="ml-1">Inactive</span>
                       </label>
                       <label className="flex items-center">
                         <input
@@ -188,7 +193,7 @@ function ProfilePage() {
                           checked={newUser.status === 'Block'}
                           onChange={handleChange}
                         />
-                        <span className="ml-1 text-red-500">Block</span>
+                        <span className="ml-1">Block</span>
                       </label>
                     </div>
                     <div className="flex flex-row gap-2 pt-8 justify-end">

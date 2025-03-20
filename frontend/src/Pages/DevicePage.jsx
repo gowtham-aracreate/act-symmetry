@@ -31,10 +31,7 @@ const DevicePage = () => {
     device: "",
     status: "Active"
   });
-  const [mappedDevices, setMappedDevices] = useState(() => {
-    const savedMappings = localStorage.getItem('mappedDevices');
-    return savedMappings ? JSON.parse(savedMappings) : [];
-  });
+  const [mappedDevices, setMappedDevices] = useState([]);
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
@@ -44,7 +41,7 @@ const DevicePage = () => {
     setNewDevice({ ...newDevice, [name]: value });
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:4000/newdevice", newDevice);
@@ -69,11 +66,17 @@ const DevicePage = () => {
 
   useEffect(() => {
     fetchData();
+    fetchMappedDevices();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('mappedDevices', JSON.stringify(mappedDevices));
-  }, [mappedDevices]);
+  const fetchMappedDevices = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/mappingDevice");
+      setMappedDevices(response.data);
+    } catch (error) {
+      console.error("Error fetching mapped devices:", error);
+    }
+  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -121,11 +124,15 @@ const DevicePage = () => {
         console.error("Error deleting device:", error);
       }
     } else {
-      // For mapped devices table - device will be available again in dropdown
-      const updatedMappedDevices = mappedDevices.filter(
-        (item) => item._id !== device._id
-      );
-      setMappedDevices(updatedMappedDevices);
+      try {
+        await axios.delete(`http://localhost:4000/mappingDevice/${device._id}`);
+        const updatedMappedDevices = mappedDevices.filter(
+          (item) => item._id !== device._id
+        );
+        setMappedDevices(updatedMappedDevices);
+      } catch (error) {
+        console.error("Error deleting device mapping:", error);
+      }
     }
   };
 
@@ -150,22 +157,31 @@ const DevicePage = () => {
 
   const handleMapSubmit = async (e) => {
     e.preventDefault();
-    const newMapping = {
-      username: mappingForm.username,
-      "added device": mappingForm.device,
-      status: mappingForm.status,
-      _id: Date.now() // temporary ID for demo
-    };
-    const updatedMappings = [...mappedDevices, newMapping];
-    setMappedDevices(updatedMappings);
-    setMappingForm({ username: "", device: "", status: "Active" });
-    setIsMapModalOpen(false);
+    try {
+      const response = await axios.post("http://localhost:4000/mappingDevice", {
+        username: mappingForm.username,
+        addedDevice: mappingForm.device,
+        status: mappingForm.status
+      });
+      
+      setMappedDevices([...mappedDevices, response.data.mapping]);
+      setMappingForm({ username: "", device: "", status: "Active" });
+      setIsMapModalOpen(false);
+    } catch (error) {
+      console.error("Error mapping device:", error);
+    }
   };
 
-  const filteredData = data.filter(device =>
-    (device.dname || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (device.dnum || '').toString().includes(searchTerm.toLowerCase()) ||
-    (device.macid || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredData = data.filter((device) =>
+    device.dname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    device.dnum.toString().includes(searchTerm.toLowerCase()) ||
+    device.macid.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredMappedDevices = mappedDevices.filter((device) =>
+    device.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    device.addedDevice.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    device.status.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const mappingTableData = filteredData.map((device) => ({
@@ -175,8 +191,14 @@ const DevicePage = () => {
     _id: device._id
   }));
 
-  const additionTableData = mappedDevices.length > 0 ? mappedDevices : [];
+  const additionTableData = filteredMappedDevices.map((device) => ({
+    username: device.username,
+    "added device": device.addedDevice,
+    status: device.status,
+    _id: device._id
+  }));
 
+  
   return (
     <DashboardLayout>
       <div className="overflow-x-auto">
