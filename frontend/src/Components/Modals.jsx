@@ -21,7 +21,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
     } else {
       onSave(formData);
     }
-    onClose(); // Close the modal after saving or editing
+    onClose(); 
   };
 
   if (!isOpen) {
@@ -29,10 +29,10 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
   }
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center ">
       <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl text-blue-600 font-bold">{mode === 'edit' ? 'EDIT USER DETAILS' : mode === 'delete' ? 'DELETE USER' : 'VIEW USER DETAILS'}</h2>
+          <h2 className="text-xl text-blue-400 font-bold">{mode === 'edit' ? 'EDIT USER DETAILS' : mode === 'delete' ? 'DELETE USER' : 'VIEW USER DETAILS'}</h2>
           <button onClick={onClose} className="text-black bg-white cursor-pointer text-lg font-bold"> X </button>
         </div>
         <hr className="w-full my-4" />
@@ -52,7 +52,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
             </div>
             <div className="flex">
               <p><strong>Status</strong></p>
-              <p className={`ml-22 ${user.status === 'Active' ? 'text-green-500' : user.status === 'Inactive' ? 'text-orange-500' : 'text-red-500'}`}>{user.status}</p>
+              <p className={`ml-22 ${user.status === 'Active' ? 'text-green-500' : user.status === 'Inactive' ? 'text-blue-500' : 'text-red-500'}`}>{user.status}</p>
             </div>
             <div className="flex justify-end mt-4 space-x-2">
               <button onClick={() => setFormData(user) || setModalMode('edit')} className="bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">Edit</button>
@@ -65,7 +65,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
             <p>Are you sure you want to delete this user?</p>
             <div className="flex justify-end mt-4 space-x-2">
               <button onClick={() => onDelete(user)} className="bg-red-500 text-white font-bold py-2 px-4 rounded cursor-pointer">Confirm</button>
-              <button onClick={onClose} className="bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">Cancel</button>
+              <button onClick={onClose} className="bg-blue-400 text-white font-bold py-2 px-4 rounded cursor-pointer">Cancel</button>
             </div>
           </div>
         ) : (
@@ -76,7 +76,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
                 type="text"
                 name="name"
                 value={formData.name}
-                onChange={handleChange}
+              
                 className="p-2 border border-gray-300 rounded"
               />
             </div>
@@ -86,7 +86,6 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
                 type="email"
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
                 className="p-2 border border-gray-300 rounded"
               />
             </div>
@@ -101,24 +100,34 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
               />
             </div>
             <div className="flex flex-col">
+              <label><strong>Pin</strong></label>
+              <input
+                type="text"
+                name="pin"
+                value={formData.pin}
+                onChange={handleChange}
+                className="p-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div className="flex flex-col">
               <label><strong>Status</strong></label>
               <div className="flex flex-row gap-6 pt-[5px]">
                 <input
-                  type="checkbox"
+                  type="radio"
                   name="status"
                   value="Active"
                   checked={formData.status === 'Active'}
                   onChange={handleChange}
                 /> Active
                 <input
-                  type="checkbox"
+                  type="radio"
                   name="status"
                   value="Inactive"
                   checked={formData.status === 'Inactive'}
                   onChange={handleChange}
                 /> Inactive
                 <input
-                  type="checkbox"
+                  type="radio"
                   name="status"
                   value="Block"
                   checked={formData.status === 'Block'}

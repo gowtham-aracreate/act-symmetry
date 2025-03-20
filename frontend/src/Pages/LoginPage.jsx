@@ -5,7 +5,6 @@ import Label from '../Components/Label';
 import Button from '../Components/Button';
 import admin_logo from '../assets/images/admin_logo.png';
 import { Eye, EyeOff } from 'lucide-react';
-
 import './login.css';
 
 const Login = () => {
@@ -30,7 +29,7 @@ const Login = () => {
       console.log(res.data);
     } catch (error) {
       console.error('Error logging in', error);
-      alert('Invalid email or password,Login failed');
+      alert('Invalid email or password, Login failed');
     }
   };
 
@@ -42,6 +41,7 @@ const Login = () => {
         </div>
         <h1 className="font-bold text-2xl mb-4 text-center">Welcome back</h1>
         <p className="text-gray-600 mb-6 text-center">Please provide user credentials to login</p>
+
         <form onSubmit={handleUser}>
           <div className="mb-4">
             <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2" text="Email" />Email
@@ -56,29 +56,28 @@ const Login = () => {
           </div>
 
           <div className="mb-6">
-            <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password">Password
-              <div className="relative">
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  placeholder="Please enter your password"
-                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
-                />
-                <Button
-                  id="eye-btn"
-                  type="button"
-                  className="absolute right-0 pr-3 pt-2"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowPassword(!showPassword);
-                  }}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </Button>
-              </div>
-            </Label>
+            <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password" />Password
+            <div className="relative">
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                placeholder="Please enter your password"
+                className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
+              />
+              <Button
+                id="eye-btn"
+                type="button"
+                className="absolute right-0 pr-3 pt-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowPassword(!showPassword);
+                }}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </Button>
+            </div>
           </div>
 
           <div className="flex items-center justify-between mb-6 ml-60">
