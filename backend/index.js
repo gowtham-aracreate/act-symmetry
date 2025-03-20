@@ -44,6 +44,14 @@ const newDeviceSchema = new mongoose.Schema({
 
 const NewDeviceUsers = mongoose.model("newdevice", newDeviceSchema);
 
+const mappingDeviceSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    addedDevice: { type: String, required: true },
+    status: { type: String, enum: ['Active', 'Inactive', 'Block'], default: 'Active' }
+});
+
+const MappingDevice = mongoose.model("mappingDevice", mappingDeviceSchema);
+
 const otpSchema = new mongoose.Schema({
     email: { type: String, required: true },
     otp: { type: String, required: true },
@@ -53,10 +61,10 @@ const otpSchema = new mongoose.Schema({
 const OTP = mongoose.model("otp", otpSchema);
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+ service: "gmail",
     auth: {
-        user: process.env.EMAIL_USER, // Your Gmail ID
-        pass: process.env.EMAIL_PASS, // Your Gmail App Password
+      user: process.env.EMAIL_USER, // Your Gmail ID
+      pass: process.env.EMAIL_PASS, // Your Gmail App Password
     },
 });
 
@@ -118,28 +126,35 @@ app.get('/newdevice', async (req, res) => {
     }
 });
 
-app.put('/updateDevice/:id', async (req, res) => {
-    const { id } = req.params;
-    const { dname, dnum, macid, status } = req.body;
+app.post('/mappingDevice', async (req, res) => {
+    const { username, addedDevice, status } = req.body;
     try {
-        const updatedDevice = await NewDeviceUsers.findByIdAndUpdate(
-            id,
-            { dname, dnum, macid, status },
-            { new: true }
-        );
-        res.json(updatedDevice);
+        const newMapping = new MappingDevice({ username, addedDevice, status });
+        await newMapping.save();
+        res.status(201).json({ message: "Mapping created successfully!", mapping: newMapping });
     } catch (error) {
-        res.status(500).json({ error: "Error updating device" });
+        console.error("Error creating mapping:", error);
+        res.status(500).json({ error: "Error creating mapping" });
+    }
+});
+
+app.get('/mappingDevice', async (req, res) => {
+    try {
+        const mappings = await MappingDevice.find();
+        res.json(mappings);
+    } catch (error) {
+        console.error("Error fetching mappings:", error);
+        res.status(500).json({ error: "Error fetching mappings" });
     }
 });
 
 app.put('/updateDevice/:id', async (req, res) => {
   const { id } = req.params;
-  const { dname, dnum, macid } = req.body;
+  const { dname, dnum, macid , status } = req.body;
   try {
     const updatedDevice = await NewDeviceUsers.findByIdAndUpdate(
       id,
-      { dname, dnum, macid },
+      { dname, dnum, macid,status },
       { new: true }
     );
     res.json(updatedDevice);
@@ -160,10 +175,22 @@ app.delete('/deleteDevice/:id', async (req, res) => {
   }
 });
 
+app.delete('/mappingDevice/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await MappingDevice.findByIdAndDelete(id);
+        res.sendStatus(204);
+    } catch (error) {
+        console.error("Error deleting mapping:", error);
+        res.status(500).json({ error: "Error deleting mapping" });
+    }
+});
+
+
 app.post("/forgot-password", async (req, res) => {
     const { email } = req.body;
     const user = await Users.findOne({ email });
-
+  
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -188,19 +215,19 @@ app.post("/forgot-password", async (req, res) => {
 app.post("/verify-otp", async (req, res) => {
     const { email, otp } = req.body;
     const otpRecord = await OTP.findOne({ email, otp });
-
-    if (!otpRecord) return res.status(400).json({ message: "Invalid OTP" });
+  
+    if (!otpRecord) return res(400).json({ message: "Invalid OTP" });
     if (otpRecord.expiresAt < Date.now()) {
         return res.status(400).json({ message: "OTP expired" });
     }
-
+    
     res.json({ message: "OTP verified successfully" });
 });
 
 app.post("/reset-password", async (req, res) => {
     const { email, otp, newPassword } = req.body;
     const otpRecord = await OTP.findOne({ email, otp });
-
+  
     if (!otpRecord) return res.status(400).json({ message: "Invalid OTP" });
 
     // Hash the new password before storing it
@@ -246,7 +273,7 @@ app.put('/updateUser/:email', async (req, res) => {
         const updatedUser = await CreatedUsers.findOneAndUpdate(
             { email },
             { name, address, locality, statecode, pin, status },
-            { new: true }
+            { new: true } // Return the updated document
         );
         res.json(updatedUser);
     } catch (error) {
