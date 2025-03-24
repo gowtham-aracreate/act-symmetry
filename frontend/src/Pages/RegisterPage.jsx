@@ -80,7 +80,7 @@ const RegisterPage = () => {
             </div>
           </form>
         </div>
-      </div>
+      </div>12
     </div>
   );
 };

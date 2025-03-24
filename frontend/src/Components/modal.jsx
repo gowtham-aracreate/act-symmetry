@@ -55,8 +55,8 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
               <p className={`ml-22 ${user.status === 'Active' ? 'text-green-500' : user.status === 'Inactive' ? 'text-orange-500' : 'text-red-500'}`}>{user.status}</p>
             </div>
             <div className="flex justify-end mt-4 space-x-2">
-              <button onClick={() => setFormData(user) || setModalMode('edit')} className="bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">Edit</button>
-              <button onClick={() => setModalMode('delete')} className="bg-red-500 text-white font-bold py-2 px-4 rounded cursor-pointer">Delete</button>
+              <button onClick={() => setFormData(user) || setModalMode('edit')} className="bg-blue-600 text-white hover:bg-black font-bold py-2 px-4 rounded cursor-pointer">Edit</button>
+              <button onClick={() => setModalMode('delete')} className="bg-blue-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded cursor-pointer">Delete</button>
               {/* <button onClick={onClose} className="bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">Close</button> */}
             </div>
           </div>
@@ -64,8 +64,8 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
           <div className="space-y-2 mt-5 gap-3">
             <p>Are you sure you want to delete this user?</p>
             <div className="flex justify-end mt-4 space-x-2">
-              <button onClick={() => onDelete(user)} className="bg-red-500 text-white font-bold py-2 px-4 rounded cursor-pointer">Confirm</button>
-              <button onClick={onClose} className="bg-blue-600 text-white font-bold py-2 px-4 rounded cursor-pointer">Cancel</button>
+              <button onClick={() => onDelete(user)} className="bg-blue-600 hover:bg-red-500 text-white font-bold py-2 px-4 rounded cursor-pointer">Confirm</button>
+              <button onClick={onClose} className="bg-blue-600 hover:bg-black text-white font-bold py-2 px-4 rounded cursor-pointer">Cancel</button>
             </div>
           </div>
         ) : (
@@ -127,7 +127,7 @@ const Modal = ({ isOpen, onClose, user, mode, onSave, onEdit, onDelete, setModal
               </div>
             </div>
             <div className="flex justify-end mt-4">
-              <button type="submit" className="bg-black text-white hover:bg-blue-600 font-bold py-2 px-4 rounded cursor-pointer">Save</button>
+              <button type="submit" className="bg-blue-600 text-white hover:bg-black font-bold py-2 px-4 rounded cursor-pointer">Save</button>
             </div>
           </form>
         )}
