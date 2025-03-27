@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Label from '../Components/Label';
-import Button from '../Components/Button';
-import admin_logo from '../assets/images/admin_logo.png';
-import { Eye, EyeOff } from 'lucide-react';
-import './login.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Label from "../Components/Label";
+import Button from "../Components/Button";
+import admin_logo from "../assets/images/admin_logo.png";
+import { Eye, EyeOff } from "lucide-react";
+import "./login.css";
+import LoginSuccess from "./LoginSuccess";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false); // Track login success
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   const handleUser = async (e) => {
     e.preventDefault();
@@ -20,18 +29,19 @@ const Login = () => {
       password,
     };
     try {
-      const res = await axios.post('http://localhost:4000/login', UserDetail);
-      if (res.data.redirectUrl) {
-        navigate(res.data.redirectUrl);
-      } else {
-        console.log('Login successful, but no redirect URL provided');
-      }
-      console.log(res.data);
+      const res = await axios.post("http://localhost:4000/login", UserDetail);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("email", email); // Store email for logging actions
+      await axios.post("http://localhost:4000/log-action", { email, action: "Login" }); // Log login action
+      setIsLoginSuccess(true); // Show the success screen
     } catch (error) {
-      console.error('Error logging in', error);
-      alert('Invalid email or password, Login failed');
+      console.error("Error logging in", error);
     }
   };
+
+  if (isLoginSuccess) {
+    return <LoginSuccess />; // Render the success screen
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -44,7 +54,7 @@ const Login = () => {
 
         <form onSubmit={handleUser}>
           <div className="mb-4">
-            <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2" text="Email" />Email
+            <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2" text="Email" />
             <input
               onChange={(e) => setEmail(e.target.value)}
               value={email}
@@ -56,12 +66,12 @@ const Login = () => {
           </div>
 
           <div className="mb-6">
-            <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password" />Password
+            <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password" />
             <div className="relative">
               <input
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 id="password"
                 placeholder="Please enter your password"
                 className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
@@ -81,7 +91,11 @@ const Login = () => {
           </div>
 
           <div className="flex items-center justify-between mb-6 ml-60">
-            <a href="#" onClick={() => navigate('/forget-password')} className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800">
+            <a
+              href="#"
+              onClick={() => navigate("/forget-password")}
+              className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800"
+            >
               Forgot Password?
             </a>
           </div>
@@ -92,7 +106,11 @@ const Login = () => {
         </form>
         <div className="flex items-center pt-4 justify-center">
           <p>Don't have an account? </p>
-          <a href="#" onClick={() => navigate('/register')} className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800">
+          <a
+            href="#"
+            onClick={() => navigate("/register")}
+            className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800"
+          >
             Register
           </a>
         </div>

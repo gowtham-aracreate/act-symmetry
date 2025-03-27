@@ -1,0 +1,33 @@
+.login-success-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.login-success-card {
+  text-align: center;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-success-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.login-success-message {
+  font-size: 18px;
+  color: #333;
+}
+
+.login-success-footer {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #888;
+}

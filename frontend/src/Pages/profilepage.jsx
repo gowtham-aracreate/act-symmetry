@@ -56,19 +56,25 @@ function ProfilePage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.post('http://localhost:4000/createExtended', newUser)
-      .then(response => {
+      .then(async (response) => {
         console.log(response.data);
         setData([...data, response.data]);
         setNewUser({ name: '', email: '', address: '', locality: '', statecode: '', password: '', pin: '', status: 'Active' });
         setIsOpen(false);
+
+        // Log "User Created" action
+        await axios.post('http://localhost:4000/log-action', {
+          email: newUser.email,
+          action: "UserCreated",
+        });
       })
       .catch(error => console.error('Error creating user:', error));
   };
 
   const handleEditUser = async (updatedUser) => {
     try {
-      const response = await axios.put(
-        `http://localhost:4000/updateUser/${updatedUser.email}`,
+      const response = await axios.put(`
+        http://localhost:4000/updateUser/${updatedUser.email}`,
         updatedUser
       );
       const updatedData = data.map((user) =>
@@ -117,7 +123,7 @@ function ProfilePage() {
                 <input
                   className="pl-4 h-9 w-64 border-[1px] rounded-md border-[#9C9C9C] outline-none"
                   type="text"
-                  placeholder="Search"
+                  placeholder="Search here..."
                   value={searchTerm}
                   onChange={handleSearchChange}
                 />

@@ -83,7 +83,7 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true,
     currentPage * itemsPerPage
   );
 
-  const columnWidth = `${100 / (columns.length + 1.5)}%`; 
+  const columnWidth = `${100 / (columns.length + (showEditAction ? 2 : 1))}%`; // +2 for S.No and Actions columns, +1 if no Actions column
 
   return (
     <div className="pr-10 pl-10 pt-6 ">
@@ -97,7 +97,9 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true,
                   {column}
                 </th>
               ))}
-              <th className="p-3 text-center" style={{ width: columnWidth }}>Actions</th>
+              {showEditAction && (
+                <th className="p-3 text-center" style={{ width: columnWidth }}>Actions</th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -109,13 +111,15 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true,
                     {item[column.toLowerCase()]}
                   </td>
                 ))}
-                <td className="p-3 text-center flex justify-center items-center space-x-2">
-                  <button className="text-gray-500 hover:text-blue-800 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
-                  {showEditAction && onEditUser && (
-                    <button className="text-gray-500 hover:text-blue-800 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
-                  )}
-                  <button className="text-gray-500 hover:text-red-600 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
-                </td>
+                {showEditAction && (
+                  <td className="p-3 text-center flex justify-center items-center space-x-2">
+                    <button className="text-gray-500 hover:text-blue-800 cursor-pointer" onClick={() => handleViewDetails(item)}><Eye size={16} /></button>
+                    {onEditUser && (
+                      <button className="text-gray-500 hover:text-blue-800 cursor-pointer" onClick={() => handleEditUser(item)}><Edit size={16} /></button>
+                    )}
+                    <button className="text-gray-500 hover:text-red-600 cursor-pointer" onClick={() => handleDeleteUser(item)}><Trash size={16} /></button>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -143,9 +147,10 @@ const Table = ({ data, onEditUser, onDeleteUser, columns, showEditAction = true,
         mode={modalMode}
         onSave={handleSaveUser}
         onEdit={handleSaveUser}
-        onDelete={handleConfirmDeleteUser} // Pass handleConfirmDeleteUser to Modal
-        setModalMode={setModalMode} // Pass setModalMode to Modal
+        onDelete={handleConfirmDeleteUser}
+        setModalMode={setModalMode}
       />
+
     </div>
   );
 };

@@ -201,9 +201,9 @@ const DevicePage = () => {
   
   return (
     <DashboardLayout>
-      <div className="overflow-x-auto">
-        <div className="flex w-full items-center pb-6">
-          <h1 className="pl-10 font-semibold text-[32px] text-black">Device Management</h1>
+      <div className="overflow-x-auto pl-6 ">
+        <div className="flex w-full items-center p-6">
+          <h1 className="pl-4 font-semibold text-[32px] text-black">Device Management</h1>
           <div className="absolute right-9">
             {activeTab === "mapping" ? (
               <Button
@@ -262,18 +262,18 @@ const DevicePage = () => {
           <input
             className="pl-4 h-9 w-64 border-[1px] rounded-md border-[#9C9C9C] outline-none"
             type="text"
-            placeholder="Search"
+            placeholder="Search here..."
             value={searchTerm}
             onChange={handleSearchChange}
           />
         </div>
         {activeTab === "mapping" && (
-          <Table
+          <Table 
             columns={["Device Name", "Device Unique Number", "MAC ID"]}
             data={mappingTableData}
             onEditUser={null}  // Set to null to disable edit functionality
             onDeleteUser={handleDeleteDevice}
-            showEditAction={false}  // Add this prop to hide edit button
+            showEditAction={true}  // Add this prop to hide edit button
             onViewDetails={handleViewDevice}  // Add this prop
           />
         )}
@@ -283,7 +283,7 @@ const DevicePage = () => {
             data={additionTableData}
             onEditUser={null}  
             onDeleteUser={handleDeleteDevice}
-            showEditAction={false} 
+            showEditAction={true} 
             onViewDetails={handleViewDevice}  // Add this prop
           />
         )}

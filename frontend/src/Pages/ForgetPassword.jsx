@@ -14,10 +14,8 @@ const ForgetPassword = () => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:4000/forgot-password", { email });
-      alert("OTP sent to your email!");
       setStep(2);
     } catch (error) {
-      alert(error.response?.data?.message || "Error sending OTP");
     }
   };
 
@@ -25,10 +23,8 @@ const ForgetPassword = () => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:4000/verify-otp", { email, otp });
-      alert("OTP verified! Enter new password.");
       setStep(3);
     } catch (error) {
-      alert(error.response?.data?.message || "Invalid OTP");
     }
   };
 
@@ -36,12 +32,10 @@ const ForgetPassword = () => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:4000/reset-password", { email, otp, newPassword });
-      alert("Password reset successful! Please log in.");
       if (res.data.redirectUrl) {
         window.location.href = res.data.redirectUrl;
       }
     } catch (error) {
-      alert(error.response?.data?.message || "Error resetting password");
     }
   };
   return (

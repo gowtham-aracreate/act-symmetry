@@ -12,6 +12,7 @@ function DashboardPage() {
   const navigate = useNavigate()
   return (
     <DashboardLayout>
+      <div className="w-full pt-6 pl-6">
       <h1 className="w-[171px] h-[40px] ml-[44px] font-bold text-[32px] text-black ">DASHBOARD</h1>
       <div className="md:grid md:grid-cols-3 sm:grid sm:grid-cols-2">
         <Card
@@ -32,6 +33,7 @@ function DashboardPage() {
         <Card
           name="Set User Limits"
           src={setuser_black} />
+      </div>
       </div>
     </DashboardLayout>
   );
