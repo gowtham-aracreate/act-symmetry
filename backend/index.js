@@ -1,15 +1,15 @@
+require("dotenv").config();
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const nodemailer = require("nodemailer");
 
 const app = express();
 const port = 4000;
 
 app.use(cors());
 app.use(express.json());
-// app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 mongoose.connect('mongodb://localhost:27017/Users')
     .then(() => console.log("MongoDB connection successful"))
@@ -36,13 +36,37 @@ const createdUserSchema = new mongoose.Schema({
 
 const CreatedUsers = mongoose.model("createdUsers", createdUserSchema);
 
-const deviceSchema = new mongoose.Schema({
-    name: String,
-    deviceId: { type: String, unique: true },
-    status: String
+const newDeviceSchema = new mongoose.Schema({
+    dname: { type: String, required: true },
+    dnum: { type: Number, required: true },
+    macid: { type: String, required: true }
 });
 
-const Devices = mongoose.model("devices", deviceSchema);
+const NewDeviceUsers = mongoose.model("newdevice", newDeviceSchema);
+
+const mappingDeviceSchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    addedDevice: { type: String, required: true },
+    status: { type: String, enum: ['Active', 'Inactive', 'Block'], default: 'Active' }
+});
+
+const MappingDevice = mongoose.model("mappingDevice", mappingDeviceSchema);
+
+const otpSchema = new mongoose.Schema({
+    email: { type: String, required: true },
+    otp: { type: String, required: true },
+    expiresAt: { type: Date, required: true },
+});
+
+const OTP = mongoose.model("otp", otpSchema);
+
+const transporter = nodemailer.createTransport({
+ service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER, // Your Gmail ID
+      pass: process.env.EMAIL_PASS, // Your Gmail App Password
+    },
+});
 
 app.post('/create', async (req, res) => {
     const { name, email, password } = req.body;
@@ -81,27 +105,150 @@ app.post('/createExtended', async (req, res) => {
     }
 });
 
-app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+app.post('/newdevice', async (req, res) => {
     try {
-        const user = await Users.findOne({ email });
-        if (!user) {
-            console.log('User not found');
-            return res.status(401).send('Invalid email or password');
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            console.log('Password does not match');
-            return res.status(401).send('Invalid email or password');
-        }
-
-        res.send({ message: 'Login successful', redirectUrl: '/dashboard' });
+        const { dname, dnum, macid } = req.body;
+        const newDevice = new NewDeviceUsers({ dname, dnum, macid });
+        await newDevice.save();
+        res.status(201).json({ message: "Device added successfully!", device: newDevice });
     } catch (error) {
-        console.error('Error logging in user', error);
-        res.status(500).send('Error logging in user');
-        res.status(404).json({ message: 'Login failed' });
+        console.error("Error saving device:", error);
+        res.status(500).json({ error: "Error saving device" });
     }
+});
+
+app.get('/newdevice', async (req, res) => {
+    try {
+        const devices = await NewDeviceUsers.find();
+        res.json(devices);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching devices" });
+    }
+});
+
+app.post('/mappingDevice', async (req, res) => {
+    const { username, addedDevice, status } = req.body;
+    try {
+        const newMapping = new MappingDevice({ username, addedDevice, status });
+        await newMapping.save();
+        res.status(201).json({ message: "Mapping created successfully!", mapping: newMapping });
+    } catch (error) {
+        console.error("Error creating mapping:", error);
+        res.status(500).json({ error: "Error creating mapping" });
+    }
+});
+
+app.get('/mappingDevice', async (req, res) => {
+    try {
+        const mappings = await MappingDevice.find();
+        res.json(mappings);
+    } catch (error) {
+        console.error("Error fetching mappings:", error);
+        res.status(500).json({ error: "Error fetching mappings" });
+    }
+});
+
+app.put('/updateDevice/:id', async (req, res) => {
+  const { id } = req.params;
+  const { dname, dnum, macid , status } = req.body;
+  try {
+    const updatedDevice = await NewDeviceUsers.findByIdAndUpdate(
+      id,
+      { dname, dnum, macid,status },
+      { new: true }
+    );
+    res.json(updatedDevice);
+  } catch (error) {
+    console.error("Error updating device:", error);
+    res.status(500).send("Error updating device");
+  }
+});
+
+app.delete('/deleteDevice/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await NewDeviceUsers.findByIdAndDelete(id);
+    res.sendStatus(204);
+  } catch (error) {
+    console.error("Error deleting device:", error);
+    res.status(500).send("Error deleting device");
+  }
+});
+
+app.delete('/mappingDevice/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await MappingDevice.findByIdAndDelete(id);
+        res.sendStatus(204);
+    } catch (error) {
+        console.error("Error deleting mapping:", error);
+        res.status(500).json({ error: "Error deleting mapping" });
+    }
+});
+
+
+app.post("/forgot-password", async (req, res) => {
+    const { email } = req.body;
+    const user = await Users.findOne({ email });
+  
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    await OTP.create({ email, otp, expiresAt: Date.now() + 5 * 60 * 1000 });
+
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "Password Reset OTP",
+        text: `Your OTP for password reset is: ${otp}`,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        res.json({ message: "OTP sent to email" });
+    } catch (error) {
+        console.error("Error sending email:", error);
+        res.status(500).json({ message: "Error sending email", error: error.message });
+    }
+});
+
+app.post("/verify-otp", async (req, res) => {
+    const { email, otp } = req.body;
+    const otpRecord = await OTP.findOne({ email, otp });
+  
+    if (!otpRecord) return res(400).json({ message: "Invalid OTP" });
+    if (otpRecord.expiresAt < Date.now()) {
+        return res.status(400).json({ message: "OTP expired" });
+    }
+    
+    res.json({ message: "OTP verified successfully" });
+});
+
+app.post("/reset-password", async (req, res) => {
+    const { email, otp, newPassword } = req.body;
+    const otpRecord = await OTP.findOne({ email, otp });
+  
+    if (!otpRecord) return res.status(400).json({ message: "Invalid OTP" });
+
+    // Hash the new password before storing it
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await Users.updateOne({ email }, { password: hashedPassword });
+
+    await OTP.deleteOne({ email });
+
+    res.json({ message: "Password reset successful", redirectUrl: "/" });
+});
+
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    const user = await Users.findOne({ email });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) return res.status(400).json({ message: "Invalid password" });
+
+    res.json({ message: "Login successful", redirectUrl: "/dashboard" });
 });
 
 app.get('/users', async (req, res) => {
@@ -119,16 +266,6 @@ app.get('/createdUsers', async (req, res) => {
     }
 });
 
-app.get('/devices', async (req, res) => {
-    try {
-        const data = await Devices.find();
-        res.json(data);
-    } catch (error) {
-        console.error('Error fetching devices', error);
-        res.status(500).send('Error fetching devices');
-    }
-});
-
 app.put('/updateUser/:email', async (req, res) => {
     const { email } = req.params;
     const { name, address, locality, statecode, pin, status } = req.body;
@@ -136,7 +273,7 @@ app.put('/updateUser/:email', async (req, res) => {
         const updatedUser = await CreatedUsers.findOneAndUpdate(
             { email },
             { name, address, locality, statecode, pin, status },
-            { new: true }
+            { new: true } // Return the updated document
         );
         res.json(updatedUser);
     } catch (error) {
@@ -155,10 +292,6 @@ app.delete('/deleteUser/:email', async (req, res) => {
         res.status(500).send('Error deleting user');
     }
 });
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
-// });
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);

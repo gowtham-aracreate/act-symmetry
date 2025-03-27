@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Label from '../Components/Label';
 import Button from '../Components/Button';
+import admin_logo from '../assets/images/admin_logo.png';
 import { Eye, EyeOff } from 'lucide-react';
-
 import './login.css';
 
 const Login = () => {
@@ -29,15 +29,19 @@ const Login = () => {
       console.log(res.data);
     } catch (error) {
       console.error('Error logging in', error);
-      alert('Invalid email or password,Login failed');
+      alert('Invalid email or password, Login failed');
     }
   };
 
   return (
-    <div className="@container w-150 ">
-      <div className="bg-white mt-[195px] mr-[132px] ml-[130px]">
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div className="flex justify-center mb-4">
+          <img src={admin_logo} alt="Admin Logo" className="h-16 w-18" />
+        </div>
         <h1 className="font-bold text-2xl mb-4 text-center">Welcome back</h1>
         <p className="text-gray-600 mb-6 text-center">Please provide user credentials to login</p>
+
         <form onSubmit={handleUser}>
           <div className="mb-4">
             <Label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2" text="Email" />Email
@@ -52,38 +56,37 @@ const Login = () => {
           </div>
 
           <div className="mb-6">
-            <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password">Password
-              <div className="relative">
-                <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  placeholder="Please enter your password"
-                  className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
-                />
-                <Button
-                  id="eye-btn"
-                  type="button"
-                  className="absolute right-0 pr-3 pt-2"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowPassword(!showPassword);
-                  }}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </Button>
-              </div>
-            </Label>
+            <Label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2" text="Password" />Password
+            <div className="relative">
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                placeholder="Please enter your password"
+                className="shadow appearance-none rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
+              />
+              <Button
+                id="eye-btn"
+                type="button"
+                className="absolute right-0 pr-3 pt-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowPassword(!showPassword);
+                }}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </Button>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between mb-6 ml-50">
+          <div className="flex items-center justify-between mb-6 ml-60">
             <a href="#" onClick={() => navigate('/forget-password')} className="inline-block align-baseline font-bold text-sm text-black-500 hover:text-black-800">
               Forgot Password?
             </a>
           </div>
 
-          <Button id="button" type="submit" className="flex items-center justify-center ml-7">
+          <Button id="button" type="submit" className="flex items-center justify-center ml-14">
             Log In
           </Button>
         </form>
